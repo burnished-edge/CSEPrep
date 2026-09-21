@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>California Supplemental Exam (CSE) Prep Bank</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -25,50 +25,55 @@
     }
   </script>
   <style>
-    .strikethrough-opt { text-decoration: line-through; opacity: 0.5; }
+    .strikethrough-opt { text-decoration: line-through; opacity: 0.45; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
 
+  <!-- RESPONSIVE APP BAR -->
   <header class="bg-cab-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <!-- Title row spanning width -->
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigate('config-view')">
-        <div class="bg-cab-500 text-white p-2 rounded font-black text-xl tracking-wider">CSE</div>
-        <div>
-          <h1 class="font-bold text-lg leading-tight">California Supplemental Exam</h1>
-          <p class="text-xs text-sky-200">Architect Licensing Question Bank & Simulator</p>
+        <div class="bg-cab-500 text-white px-2.5 py-1.5 rounded-lg font-black text-lg tracking-wider">CSE</div>
+        <div class="flex-1 min-w-0">
+          <h1 class="font-bold text-base sm:text-lg leading-tight truncate">California Supplemental Exam</h1>
+          <p class="text-xs text-sky-200">Architect Licensing Question Bank</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2 sm:space-x-3 text-sm">
-        <button onclick="exportUserData()" title="Export all progress and notes to JSON" class="px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 text-xs sm:text-sm border border-sky-400/30 flex items-center gap-1.5 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+      <!-- Actions wrap into row on mobile -->
+      <div class="flex items-center justify-end space-x-2 text-xs sm:text-sm">
+        <button onclick="exportUserData()" title="Export all progress and notes to JSON" class="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 border border-sky-400/30 flex items-center gap-1.5 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
           <span>Export</span>
         </button>
-        <label title="Import progress from JSON" class="px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 text-xs sm:text-sm border border-sky-400/30 flex items-center gap-1.5 cursor-pointer transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        <label title="Import progress from JSON" class="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 border border-sky-400/30 flex items-center gap-1.5 cursor-pointer transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
           <span>Import</span>
           <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importUserData(event)">
         </label>
-        <button onclick="navigate('history-view')" class="px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 text-xs sm:text-sm border border-sky-400/30 transition">
+        <button onclick="navigate('history-view')" class="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 border border-sky-400/30 transition">
           History
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6">
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 pb-28">
 
     <!-- 1. CONFIGURATION VIEW -->
     <section id="config-view" class="space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h2 class="text-xl font-bold text-slate-800 mb-2">Build a Practice Session</h2>
-        <p class="text-sm text-slate-500 mb-6">Select your question pool, test parameters, and operational modes below.</p>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-1">Build Practice Session</h2>
+        <p class="text-xs sm:text-sm text-slate-500 mb-6">Configure target pool, feedback mode, and timing parameters.</p>
 
-        <form id="quiz-config-form" onsubmit="startQuiz(event)" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form id="quiz-config-form" onsubmit="startQuiz(event)" class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Question Source</label>
@@ -102,7 +107,18 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+          <!-- New Feature: Exclude answered questions -->
+          <div class="p-3.5 bg-sky-50/70 border border-sky-200/80 rounded-lg">
+            <label class="flex items-start sm:items-center cursor-pointer select-none">
+              <input type="checkbox" id="cfg-exclude-used" class="mt-0.5 sm:mt-0 w-4 h-4 rounded text-cab-600 focus:ring-cab-500 border-slate-300">
+              <span class="ml-2.5 text-xs sm:text-sm text-slate-700">
+                <strong>Exclude already answered questions</strong>
+                <span class="block sm:inline text-xs text-slate-500 sm:ml-1">(Ensures you only get fresh, unseen questions until the bank is exhausted)</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-4 border-t border-slate-100">
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Feedback Mode</label>
               <div class="space-y-2">
@@ -110,7 +126,7 @@
                   <input type="radio" name="cfg-feedback" value="instant" checked class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Study Mode (Instant Feedback)</strong>
-                    <span class="text-xs text-slate-500">Explanations and citations appear after selecting an answer.</span>
+                    <span class="text-xs text-slate-500">Answers and citations appear after selecting an option.</span>
                   </span>
                 </label>
                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition border-slate-200">
@@ -130,23 +146,23 @@
                   <input type="radio" name="cfg-timer" value="timed" checked class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Timed (Standard CSE Pacing)</strong>
-                    <span class="text-xs text-slate-500">Allocates ~1.6 minutes per question (matches 3.5h for 125 questions).</span>
+                    <span class="text-xs text-slate-500">Allocates ~1.6 minutes per question (matches 3.5h exam).</span>
                   </span>
                 </label>
                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition border-slate-200">
                   <input type="radio" name="cfg-timer" value="untimed" class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Untimed Session</strong>
-                    <span class="text-xs text-slate-500">Practice at your own pace without time pressure.</span>
+                    <span class="text-xs text-slate-500">Practice at your own pace without timer pressure.</span>
                   </span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div class="pt-4 flex items-center justify-between">
-            <div class="text-xs text-slate-500" id="pool-count-label">Loading questions...</div>
-            <button type="submit" class="bg-cab-600 hover:bg-cab-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm transition">
+          <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs text-slate-500 text-center sm:text-left" id="pool-count-label">Loading questions...</div>
+            <button type="submit" class="w-full sm:w-auto bg-cab-600 hover:bg-cab-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm transition">
               Start Quiz Session
             </button>
           </div>
@@ -156,48 +172,50 @@
 
     <!-- 2. QUIZ SESSION VIEW -->
     <section id="quiz-view" class="hidden space-y-4">
-      <div class="bg-white rounded-lg border border-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-        <div class="flex items-center space-x-3">
-          <span class="text-sm font-semibold text-slate-700" id="q-counter">Question 1 of 25</span>
-          <span class="text-xs bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-medium" id="q-source-tag">Exam 1</span>
+      <!-- Status bar -->
+      <div class="bg-white rounded-lg border border-slate-200 px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <span class="text-xs sm:text-sm font-semibold text-slate-700" id="q-counter">Question 1 of 25</span>
+          <span class="text-[11px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-medium truncate max-w-[140px]" id="q-source-tag">Exam 1</span>
         </div>
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center text-slate-600 font-mono text-sm" id="timer-box">
-            <svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="flex items-center text-slate-600 font-mono text-xs sm:text-sm" id="timer-box">
+            <svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <span id="quiz-timer">00:00</span>
           </div>
-          <button onclick="toggleBookmarkCurrent()" id="btn-bookmark" class="text-xs flex items-center gap-1 border border-slate-300 px-2.5 py-1 rounded hover:bg-slate-100 transition">
+          <button onclick="toggleBookmarkCurrent()" id="btn-bookmark" class="text-xs flex items-center gap-1 border border-slate-300 px-2 py-1 rounded hover:bg-slate-100 transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
             <span id="btn-bookmark-txt">Flag</span>
           </button>
-          <button onclick="confirmEarlySubmit()" class="text-xs bg-rose-50 border border-rose-200 text-rose-700 px-2.5 py-1 rounded hover:bg-rose-100 transition">
-            Finish Exam
+          <button onclick="confirmEarlySubmit()" class="text-xs bg-rose-50 border border-rose-200 text-rose-700 px-2 py-1 rounded hover:bg-rose-100 transition">
+            Finish
           </button>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
-        <div class="text-base sm:text-lg font-medium text-slate-800 leading-relaxed whitespace-pre-line" id="q-text">
-          Question stem appears here...
+      <!-- Question Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
+        <div class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed whitespace-pre-line" id="q-text">
+          Question prompt appears here...
         </div>
 
-        <div class="space-y-3" id="q-options"></div>
+        <div class="space-y-2.5" id="q-options"></div>
 
-        <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
           <span class="text-slate-500 font-medium">Confidence Level:</span>
-          <div class="flex space-x-2">
-            <button type="button" onclick="setConfidence('confident')" id="conf-confident" class="conf-btn px-3 py-1 rounded border border-slate-300 hover:bg-slate-100">Confident</button>
-            <button type="button" onclick="setConfidence('unsure')" id="conf-unsure" class="conf-btn px-3 py-1 rounded border border-slate-300 hover:bg-slate-100">Unsure</button>
-            <button type="button" onclick="setConfidence('guess')" id="conf-guess" class="conf-btn px-3 py-1 rounded border border-slate-300 hover:bg-slate-100">Guess</button>
+          <div class="flex space-x-1.5">
+            <button type="button" onclick="setConfidence('confident')" id="conf-confident" class="conf-btn px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100">Confident</button>
+            <button type="button" onclick="setConfidence('unsure')" id="conf-unsure" class="conf-btn px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100">Unsure</button>
+            <button type="button" onclick="setConfidence('guess')" id="conf-guess" class="conf-btn px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100">Guess</button>
           </div>
         </div>
 
-        <div id="q-explanation-box" class="hidden p-4 rounded-lg bg-slate-50 border border-slate-200 text-sm space-y-2">
+        <div id="q-explanation-box" class="hidden p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs sm:text-sm space-y-2">
           <div class="font-bold flex items-center gap-2" id="explanation-title"></div>
           <div class="text-slate-700" id="explanation-text"></div>
         </div>
 
-        <div class="pt-2">
+        <div class="pt-1">
           <button onclick="toggleNoteField()" class="text-xs text-sky-600 hover:underline flex items-center gap-1">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             <span>Add Personal Note to this Question</span>
@@ -207,62 +225,48 @@
           </div>
         </div>
       </div>
-
-      <div class="flex items-center justify-between pt-2">
-        <button onclick="previousQuestion()" id="btn-prev" class="px-4 py-2 border border-slate-300 bg-white rounded-lg text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
-          &larr; Previous
-        </button>
-        <div class="flex items-center space-x-2">
-          <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2 bg-cab-600 text-white rounded-lg text-sm font-medium hover:bg-cab-700">
-            Next &rarr;
-          </button>
-          <button onclick="submitQuiz()" id="btn-submit" class="hidden px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700">
-            Submit Exam
-          </button>
-        </div>
-      </div>
     </section>
 
     <!-- 3. RESULTS VIEW -->
     <section id="results-view" class="hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
         <div class="border-b border-slate-100 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 class="text-2xl font-bold text-slate-800">Session Results</h2>
-            <p class="text-sm text-slate-500" id="res-date">Completed Session</p>
+            <p class="text-xs sm:text-sm text-slate-500" id="res-date">Completed Session</p>
           </div>
-          <button onclick="navigate('config-view')" class="px-4 py-2 bg-cab-600 text-white rounded-lg text-sm font-medium hover:bg-cab-700">
+          <button onclick="navigate('config-view')" class="px-4 py-2 bg-cab-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-cab-700">
             Start New Session
           </button>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
-            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Score</div>
-            <div class="text-3xl font-black mt-1" id="res-percent">0%</div>
-            <div class="text-xs text-slate-500 mt-0.5" id="res-ratio">0 / 0</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+          <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Score</div>
+            <div class="text-2xl sm:text-3xl font-black mt-1" id="res-percent">0%</div>
+            <div class="text-[11px] text-slate-500 mt-0.5" id="res-ratio">0 / 0</div>
           </div>
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
-            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Status</div>
-            <div class="text-2xl font-black mt-2" id="res-status">PASS</div>
-            <div class="text-xs text-slate-400 mt-0.5">Threshold: 70%</div>
+          <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Status</div>
+            <div class="text-xl sm:text-2xl font-black mt-2" id="res-status">PASS</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Threshold: 70%</div>
           </div>
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
-            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Time Taken</div>
-            <div class="text-2xl font-black mt-2" id="res-time">00:00</div>
-            <div class="text-xs text-slate-400 mt-0.5" id="res-pace">0s / quest</div>
+          <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Time Taken</div>
+            <div class="text-xl sm:text-2xl font-black mt-2" id="res-time">00:00</div>
+            <div class="text-[11px] text-slate-400 mt-0.5" id="res-pace">0s / quest</div>
           </div>
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
-            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Metacognition</div>
-            <div class="text-sm font-semibold mt-2" id="res-confidence-breakdown">-</div>
-            <div class="text-xs text-slate-400 mt-0.5">Confident & Correct</div>
+          <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Metacognition</div>
+            <div class="text-xs sm:text-sm font-semibold mt-2" id="res-confidence-breakdown">-</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Confident & Correct</div>
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-bold text-slate-800">Answer Review</h3>
-            <div class="flex space-x-2 text-xs">
+            <h3 class="text-sm sm:text-base font-bold text-slate-800">Answer Review</h3>
+            <div class="flex space-x-1.5 text-xs">
               <button onclick="filterReview('all')" class="px-2.5 py-1 rounded bg-slate-200 font-medium">All</button>
               <button onclick="filterReview('incorrect')" class="px-2.5 py-1 rounded bg-rose-100 text-rose-800 font-medium">Missed</button>
               <button onclick="filterReview('flagged')" class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 font-medium">Flagged</button>
@@ -275,26 +279,26 @@
 
     <!-- 4. PAST SESSIONS VIEW -->
     <section id="history-view" class="hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
         <div class="flex items-center justify-between mb-6">
           <div>
-            <h2 class="text-xl font-bold text-slate-800">Quiz History & Saved Sessions</h2>
-            <p class="text-xs text-slate-500">Stored locally in your browser storage or synced via JSON.</p>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Quiz History & Records</h2>
+            <p class="text-xs text-slate-500">Stored locally in browser storage or synced via JSON.</p>
           </div>
-          <button onclick="navigate('config-view')" class="text-sm text-sky-600 hover:underline">
-            &larr; Back to Quiz Builder
+          <button onclick="navigate('config-view')" class="text-xs sm:text-sm text-sky-600 hover:underline">
+            &larr; Back to Builder
           </button>
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-slate-700 text-xs uppercase font-semibold border-b border-slate-200">
+          <table class="w-full text-left text-xs sm:text-sm text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 text-[11px] uppercase font-semibold border-b border-slate-200">
               <tr>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4">Questions</th>
-                <th class="py-3 px-4">Score</th>
-                <th class="py-3 px-4">Time</th>
-                <th class="py-3 px-4">Status</th>
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">Questions</th>
+                <th class="py-2.5 px-3">Score</th>
+                <th class="py-2.5 px-3">Time</th>
+                <th class="py-2.5 px-3">Status</th>
               </tr>
             </thead>
             <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
@@ -308,7 +312,24 @@
 
   </main>
 
-  <!-- QUESTION BANK EMBEDDED DATA SCRIPT -->
+  <!-- FIXED BOTTOM NAVIGATION BAR FOR ACTIVE QUIZ -->
+  <aside id="quiz-bottom-bar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 shadow-lg pb-safe">
+    <div class="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
+      <button onclick="previousQuestion()" id="btn-prev" class="px-4 py-2 border border-slate-300 bg-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1">
+        <span>&larr;</span> <span>Previous</span>
+      </button>
+      <div class="flex items-center space-x-2">
+        <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2 bg-cab-600 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-cab-700 transition flex items-center gap-1">
+          <span>Next</span> <span>&rarr;</span>
+        </button>
+        <button onclick="submitQuiz()" id="btn-submit" class="hidden px-5 py-2 bg-emerald-600 text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-emerald-700 transition shadow-sm">
+          Submit Exam
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- QUESTION BANK EMBEDDED DATA -->
   <script id="cse-data-script">
     const QUESTION_BANK = [
       // === CORE PRACTICE SCENARIOS ===
@@ -1700,11 +1721,12 @@
     ];
   </script>
 
-  <!-- APPLICATION LOGIC -->
+  <!-- SCRIPT APPLICATION LOGIC -->
   <script>
     let userState = {
       bookmarks: [],
       missedQuestionIds: [],
+      answeredQuestionIds: [], // Tracks all questions ever answered
       notes: {},
       history: []
     };
@@ -1725,7 +1747,11 @@
     function loadStateFromStorage() {
       const saved = localStorage.getItem('CSE_QUIZ_USER_DATA');
       if (saved) {
-        try { userState = JSON.parse(saved); } catch (e) {}
+        try { 
+          const parsed = JSON.parse(saved);
+          userState = { ...userState, ...parsed };
+          if (!userState.answeredQuestionIds) userState.answeredQuestionIds = [];
+        } catch (e) {}
       }
       updatePoolCountLabel();
     }
@@ -1740,7 +1766,8 @@
       if (!el) return;
       const missedCount = userState.missedQuestionIds ? userState.missedQuestionIds.length : 0;
       const bookCount = userState.bookmarks ? userState.bookmarks.length : 0;
-      el.innerHTML = `Total pool: <strong>${QUESTION_BANK.length}</strong> | Missed: <strong>${missedCount}</strong> | Flagged: <strong>${bookCount}</strong>`;
+      const answeredCount = userState.answeredQuestionIds ? userState.answeredQuestionIds.length : 0;
+      el.innerHTML = `Total pool: <strong>${QUESTION_BANK.length}</strong> | Answered: <strong>${answeredCount}</strong> | Missed: <strong>${missedCount}</strong> | Flagged: <strong>${bookCount}</strong>`;
     }
 
     function exportUserData() {
@@ -1764,6 +1791,7 @@
           if (imported && typeof imported === 'object') {
             userState.bookmarks = imported.bookmarks || [];
             userState.missedQuestionIds = imported.missedQuestionIds || [];
+            userState.answeredQuestionIds = imported.answeredQuestionIds || [];
             userState.notes = imported.notes || {};
             userState.history = imported.history || [];
             saveStateToStorage();
@@ -1784,23 +1812,43 @@
       const sourceVal = document.getElementById('cfg-source').value;
       const filterVal = document.getElementById('cfg-filter').value;
       const countVal = document.getElementById('cfg-count').value;
+      const excludeUsed = document.getElementById('cfg-exclude-used').checked;
       const feedbackMode = document.querySelector('input[name="cfg-feedback"]:checked').value;
       const timerMode = document.querySelector('input[name="cfg-timer"]:checked').value;
 
       let pool = [...QUESTION_BANK];
+
+      // 1. Filter by source
       if (sourceVal !== 'all') {
         pool = pool.filter(q => q.source === sourceVal);
       }
+
+      // 2. Exclude previously answered questions if selected
+      if (excludeUsed) {
+        const remaining = pool.filter(q => !userState.answeredQuestionIds.includes(q.id));
+        if (remaining.length === 0) {
+          if (confirm("You have already answered all available questions in this category! Would you like to reset your answered history for these questions to start fresh?")) {
+            userState.answeredQuestionIds = userState.answeredQuestionIds.filter(id => !pool.some(q => q.id === id));
+            saveStateToStorage();
+          } else {
+            return;
+          }
+        } else {
+          pool = remaining;
+        }
+      }
+
+      // 3. Filter by missed or bookmarked
       if (filterVal === 'missed') {
         pool = pool.filter(q => userState.missedQuestionIds.includes(q.id));
         if (pool.length === 0) {
-          alert("No previously missed questions found in this category! Resetting to full pool.");
+          alert("No previously missed questions found in this selection! Resetting to active pool.");
           pool = QUESTION_BANK.filter(q => sourceVal === 'all' || q.source === sourceVal);
         }
       } else if (filterVal === 'bookmarked') {
         pool = pool.filter(q => userState.bookmarks.includes(q.id));
         if (pool.length === 0) {
-          alert("No flagged questions found in this category! Resetting to full pool.");
+          alert("No flagged questions found in this selection! Resetting to active pool.");
           pool = QUESTION_BANK.filter(q => sourceVal === 'all' || q.source === sourceVal);
         }
       }
@@ -1869,8 +1917,8 @@
       const isFlagged = userState.bookmarks.includes(q.id);
       document.getElementById('btn-bookmark-txt').innerText = isFlagged ? "Flagged" : "Flag";
       document.getElementById('btn-bookmark').className = isFlagged 
-        ? "text-xs flex items-center gap-1 border border-amber-300 bg-amber-50 text-amber-800 px-2.5 py-1 rounded"
-        : "text-xs flex items-center gap-1 border border-slate-300 px-2.5 py-1 rounded hover:bg-slate-100";
+        ? "text-xs flex items-center gap-1 border border-amber-300 bg-amber-50 text-amber-800 px-2 py-1 rounded"
+        : "text-xs flex items-center gap-1 border border-slate-300 px-2 py-1 rounded hover:bg-slate-100";
 
       const optContainer = document.getElementById('q-options');
       optContainer.innerHTML = '';
@@ -1883,7 +1931,7 @@
         const isStruck = strikes.includes(idx);
 
         const row = document.createElement('div');
-        row.className = `flex items-center justify-between p-3.5 border rounded-lg transition ${
+        row.className = `flex items-center justify-between p-3 border rounded-lg transition ${
           isSelected ? 'border-cab-600 bg-sky-50/60 font-medium' : 'border-slate-200 hover:bg-slate-50'
         }`;
 
@@ -1896,10 +1944,10 @@
         radio.name = 'quiz_opt';
         radio.value = idx;
         radio.checked = isSelected;
-        radio.className = 'mt-1 text-cab-600 focus:ring-cab-500';
+        radio.className = 'mt-0.5 text-cab-600 focus:ring-cab-500';
 
         const labelSpan = document.createElement('span');
-        labelSpan.className = 'ml-3 text-sm text-slate-800';
+        labelSpan.className = 'ml-3 text-xs sm:text-sm text-slate-800 leading-relaxed';
         labelSpan.innerText = opt;
 
         left.appendChild(radio);
@@ -1924,9 +1972,9 @@
       ['confident', 'unsure', 'guess'].forEach(c => {
         const btn = document.getElementById(`conf-${c}`);
         if (currConf === c) {
-          btn.className = "conf-btn px-3 py-1 rounded bg-cab-600 text-white font-medium";
+          btn.className = "conf-btn px-2.5 py-1 rounded bg-cab-600 text-white font-medium";
         } else {
-          btn.className = "conf-btn px-3 py-1 rounded border border-slate-300 hover:bg-slate-100 text-slate-600";
+          btn.className = "conf-btn px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-100 text-slate-600";
         }
       });
 
@@ -1947,6 +1995,8 @@
       }
 
       document.getElementById('q-note-input').value = userState.notes[q.id] || '';
+
+      // Bottom Bar navigation states
       document.getElementById('btn-prev').disabled = (currentSession.currentIndex === 0);
       const isLast = (currentSession.currentIndex === total - 1);
       document.getElementById('btn-next').classList.toggle('hidden', isLast);
@@ -1957,15 +2007,19 @@
       const q = currentSession.questions[currentSession.currentIndex];
       currentSession.userAnswers[q.id] = optIdx;
 
+      // Mark as answered
+      if (!userState.answeredQuestionIds.includes(q.id)) {
+        userState.answeredQuestionIds.push(q.id);
+      }
+
       if (currentSession.mode === 'instant') {
         if (optIdx !== q.correct) {
           if (!userState.missedQuestionIds.includes(q.id)) userState.missedQuestionIds.push(q.id);
         } else {
           userState.missedQuestionIds = userState.missedQuestionIds.filter(id => id !== q.id);
         }
-        saveStateToStorage();
       }
-
+      saveStateToStorage();
       renderQuestion();
     }
 
@@ -2007,6 +2061,7 @@
       if (currentSession.currentIndex < currentSession.questions.length - 1) {
         currentSession.currentIndex++;
         renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
@@ -2014,6 +2069,7 @@
       if (currentSession.currentIndex > 0) {
         currentSession.currentIndex--;
         renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
@@ -2032,6 +2088,10 @@
 
       currentSession.questions.forEach(q => {
         const userChoice = currentSession.userAnswers[q.id];
+        if (userChoice !== undefined && !userState.answeredQuestionIds.includes(q.id)) {
+          userState.answeredQuestionIds.push(q.id);
+        }
+
         const isRight = (userChoice === q.correct);
         if (isRight) {
           correctCount++;
@@ -2059,10 +2119,10 @@
       saveStateToStorage();
 
       document.getElementById('res-percent').innerText = `${percent}%`;
-      document.getElementById('res-percent').className = `text-3xl font-black mt-1 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
+      document.getElementById('res-percent').className = `text-2xl sm:text-3xl font-black mt-1 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
       document.getElementById('res-ratio').innerText = `${correctCount} of ${total} correct`;
       document.getElementById('res-status').innerText = passed ? "PASS" : "FAIL";
-      document.getElementById('res-status').className = `text-2xl font-black mt-2 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
+      document.getElementById('res-status').className = `text-xl sm:text-2xl font-black mt-2 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
 
       const mins = Math.floor(currentSession.timeElapsed / 60);
       const secs = currentSession.timeElapsed % 60;
@@ -2099,7 +2159,7 @@
             </span>
             <span class="text-xs text-slate-400 font-mono">${getSourceTitle(q.source)} #${q.number}</span>
           </div>
-          <div class="text-sm font-medium text-slate-800 whitespace-pre-line">${q.text}</div>
+          <div class="text-xs sm:text-sm font-medium text-slate-800 whitespace-pre-line">${q.text}</div>
           <div class="text-xs space-y-1">
             <div class="text-slate-700"><strong>Your Answer:</strong> ${userChoice !== undefined ? q.options[userChoice] : '<em>Unanswered</em>'}</div>
             <div class="text-slate-900 font-semibold"><strong>Correct Answer:</strong> ${q.options[q.correct]}</div>
@@ -2132,12 +2192,12 @@
         const mins = Math.floor(h.timeSeconds / 60);
         const secs = h.timeSeconds % 60;
         row.innerHTML = `
-          <td class="py-3 px-4">${h.date}</td>
-          <td class="py-3 px-4">${h.total} Questions</td>
-          <td class="py-3 px-4 font-bold ${h.passed ? 'text-emerald-600' : 'text-rose-600'}">${h.percent}% (${h.correct}/${h.total})</td>
-          <td class="py-3 px-4 font-mono">${mins}m ${secs}s</td>
-          <td class="py-3 px-4">
-            <span class="px-2 py-0.5 rounded text-xs font-semibold ${h.passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+          <td class="py-2.5 px-3">${h.date}</td>
+          <td class="py-2.5 px-3">${h.total} Qs</td>
+          <td class="py-2.5 px-3 font-bold ${h.passed ? 'text-emerald-600' : 'text-rose-600'}">${h.percent}% (${h.correct}/${h.total})</td>
+          <td class="py-2.5 px-3 font-mono">${mins}m ${secs}s</td>
+          <td class="py-2.5 px-3">
+            <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${h.passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
               ${h.passed ? 'PASS' : 'FAIL'}
             </span>
           </td>
@@ -2151,7 +2211,17 @@
         document.getElementById(id).classList.add('hidden');
       });
       document.getElementById(viewId).classList.remove('hidden');
+
+      // Toggle bottom floating bar visibility
+      const bottomBar = document.getElementById('quiz-bottom-bar');
+      if (viewId === 'quiz-view') {
+        bottomBar.classList.remove('hidden');
+      } else {
+        bottomBar.classList.add('hidden');
+      }
+
       if (viewId === 'history-view') renderHistory();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
