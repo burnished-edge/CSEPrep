@@ -37,15 +37,13 @@
   <!-- RESPONSIVE APP BAR -->
   <header class="bg-cab-900 text-white shadow-md sticky top-0 z-50">
     <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <!-- Title row spanning width -->
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigate('config-view')">
         <div class="bg-cab-500 text-white px-2.5 py-1.5 rounded-lg font-black text-lg tracking-wider">CSE</div>
         <div class="flex-1 min-w-0">
           <h1 class="font-bold text-base sm:text-lg leading-tight truncate">California Supplemental Exam</h1>
-          <p class="text-xs text-sky-200">Architect Licensing Question Bank</p>
+          <p class="text-xs text-sky-200">5-Area Architect Licensing Question Bank</p>
         </div>
       </div>
-      <!-- Actions wrap into row on mobile -->
       <div class="flex items-center justify-end space-x-2 text-xs sm:text-sm">
         <button onclick="exportUserData()" title="Export all progress and notes to JSON" class="flex-1 sm:flex-initial justify-center px-3 py-1.5 rounded bg-cab-800 hover:bg-cab-700 border border-sky-400/30 flex items-center gap-1.5 transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
@@ -70,15 +68,16 @@
     <section id="config-view" class="space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
         <h2 class="text-xl font-bold text-slate-800 mb-1">Build Practice Session</h2>
-        <p class="text-xs sm:text-sm text-slate-500 mb-6">Configure target pool, feedback mode, and timing parameters.</p>
+        <p class="text-xs sm:text-sm text-slate-500 mb-6">Select your question pool, target content area, and exam parameters below.</p>
 
         <form id="quiz-config-form" onsubmit="startQuiz(event)" class="space-y-5">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Question Source</label>
-              <select id="cfg-source" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-sm">
-                <option value="all">All Sources (Full Combined Pool)</option>
+              <select id="cfg-source" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-xs sm:text-sm">
+                <option value="all">All Sources (Combined)</option>
+                <option value="ca_gaps">CA High-Yield Gaps (New)</option>
                 <option value="core">Core Practice Scenarios</option>
                 <option value="exam1">Exam 1 (70 questions)</option>
                 <option value="exam2">Exam 2 (70 questions)</option>
@@ -86,34 +85,46 @@
             </div>
 
             <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">CAB Content Area</label>
+              <select id="cfg-area" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-xs sm:text-sm">
+                <option value="all">All 5 Content Areas</option>
+                <option value="area1">Area I: Contract Dev & Planning (25%)</option>
+                <option value="area2">Area II: SD & Discretionary (30%)</option>
+                <option value="area3">Area III: Design Development (15%)</option>
+                <option value="area4">Area IV: CD & Permitting (10%)</option>
+                <option value="area5">Area V: Bidding & Construction (20%)</option>
+              </select>
+            </div>
+
+            <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Target Filter</label>
-              <select id="cfg-filter" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-sm">
+              <select id="cfg-filter" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-xs sm:text-sm">
                 <option value="all">Entire Selected Pool</option>
                 <option value="missed">Previously Missed Questions</option>
-                <option value="bookmarked">Bookmarked / Flagged Questions</option>
+                <option value="bookmarked">Bookmarked / Flagged</option>
               </select>
             </div>
 
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Question Count</label>
-              <select id="cfg-count" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-sm">
+              <select id="cfg-count" class="w-full border-slate-300 rounded-lg p-2.5 bg-slate-50 border focus:ring-2 focus:ring-cab-500 outline-none text-xs sm:text-sm">
                 <option value="10">10 Questions</option>
                 <option value="25" selected>25 Questions</option>
                 <option value="50">50 Questions</option>
-                <option value="70">70 Questions</option>
-                <option value="125">125 Questions (Full Mock CSE)</option>
+                <option value="75">75 Questions</option>
+                <option value="125">125 Questions (Mock CSE)</option>
                 <option value="all">Max Available</option>
               </select>
             </div>
           </div>
 
-          <!-- New Feature: Exclude answered questions -->
+          <!-- Exclude already answered questions (Default checked) -->
           <div class="p-3.5 bg-sky-50/70 border border-sky-200/80 rounded-lg">
             <label class="flex items-start sm:items-center cursor-pointer select-none">
-              <input type="checkbox" id="cfg-exclude-used" class="mt-0.5 sm:mt-0 w-4 h-4 rounded text-cab-600 focus:ring-cab-500 border-slate-300">
+              <input type="checkbox" id="cfg-exclude-used" checked class="mt-0.5 sm:mt-0 w-4 h-4 rounded text-cab-600 focus:ring-cab-500 border-slate-300">
               <span class="ml-2.5 text-xs sm:text-sm text-slate-700">
                 <strong>Exclude already answered questions</strong>
-                <span class="block sm:inline text-xs text-slate-500 sm:ml-1">(Ensures you only get fresh, unseen questions until the bank is exhausted)</span>
+                <span class="block sm:inline text-xs text-slate-500 sm:ml-1">(Considers stem duplicates across Exam 1 & Exam 2[cite: 1, 2] so you never see the same item twice)</span>
               </span>
             </label>
           </div>
@@ -126,14 +137,14 @@
                   <input type="radio" name="cfg-feedback" value="instant" checked class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Study Mode (Instant Feedback)</strong>
-                    <span class="text-xs text-slate-500">Answers and citations appear after selecting an option.</span>
+                    <span class="text-xs text-slate-500">Answers, citations, and rationales appear immediately.</span>
                   </span>
                 </label>
                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition border-slate-200">
                   <input type="radio" name="cfg-feedback" value="deferred" class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Exam Mode (Deferred Feedback)</strong>
-                    <span class="text-xs text-slate-500">Simulate exam day; answers reveal only at final review.</span>
+                    <span class="text-xs text-slate-500">Simulate exam conditions; review all items at the end.</span>
                   </span>
                 </label>
               </div>
@@ -146,14 +157,14 @@
                   <input type="radio" name="cfg-timer" value="timed" checked class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Timed (Standard CSE Pacing)</strong>
-                    <span class="text-xs text-slate-500">Allocates ~1.6 minutes per question (matches 3.5h exam).</span>
+                    <span class="text-xs text-slate-500">Allocates ~1.6 minutes per question (3.5h for 125 questions).</span>
                   </span>
                 </label>
                 <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition border-slate-200">
                   <input type="radio" name="cfg-timer" value="untimed" class="text-cab-600 focus:ring-cab-500">
                   <span class="ml-3 text-sm">
                     <strong class="block text-slate-800">Untimed Session</strong>
-                    <span class="text-xs text-slate-500">Practice at your own pace without timer pressure.</span>
+                    <span class="text-xs text-slate-500">Practice freely with no countdown clock.</span>
                   </span>
                 </label>
               </div>
@@ -161,7 +172,7 @@
           </div>
 
           <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="text-xs text-slate-500 text-center sm:text-left" id="pool-count-label">Loading questions...</div>
+            <div class="text-xs text-slate-500 text-center sm:text-left" id="pool-count-label">Loading question database...</div>
             <button type="submit" class="w-full sm:w-auto bg-cab-600 hover:bg-cab-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm transition">
               Start Quiz Session
             </button>
@@ -172,11 +183,10 @@
 
     <!-- 2. QUIZ SESSION VIEW -->
     <section id="quiz-view" class="hidden space-y-4">
-      <!-- Status bar -->
       <div class="bg-white rounded-lg border border-slate-200 px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-sm">
         <div class="flex items-center space-x-2">
           <span class="text-xs sm:text-sm font-semibold text-slate-700" id="q-counter">Question 1 of 25</span>
-          <span class="text-[11px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-medium truncate max-w-[140px]" id="q-source-tag">Exam 1</span>
+          <span class="text-[11px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-medium truncate max-w-[170px]" id="q-source-tag">Exam 1</span>
         </div>
         <div class="flex items-center space-x-2 sm:space-x-3">
           <div class="flex items-center text-slate-600 font-mono text-xs sm:text-sm" id="timer-box">
@@ -193,8 +203,12 @@
         </div>
       </div>
 
-      <!-- Question Card -->
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span id="q-area-tag" class="font-semibold text-slate-600">Area I: Contract Dev & Planning</span>
+          <span id="q-id-tag" class="font-mono">#e1-q1</span>
+        </div>
+
         <div class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed whitespace-pre-line" id="q-text">
           Question prompt appears here...
         </div>
@@ -230,6 +244,13 @@
     <!-- 3. RESULTS VIEW -->
     <section id="results-view" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+        
+        <!-- Reviewing Archive Alert Banner -->
+        <div id="archive-banner" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg flex items-center justify-between text-xs">
+          <span><strong>Archived Session:</strong> Viewing a previous exam attempt.</span>
+          <button onclick="navigate('history-view')" class="text-amber-800 underline font-semibold">Back to History</button>
+        </div>
+
         <div class="border-b border-slate-100 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 class="text-2xl font-bold text-slate-800">Session Results</h2>
@@ -240,7 +261,8 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <!-- Summary KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
             <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Score</div>
             <div class="text-2xl sm:text-3xl font-black mt-1" id="res-percent">0%</div>
@@ -257,9 +279,17 @@
             <div class="text-[11px] text-slate-400 mt-0.5" id="res-pace">0s / quest</div>
           </div>
           <div class="p-3 sm:p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
-            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Metacognition</div>
+            <div class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Confidence</div>
             <div class="text-xs sm:text-sm font-semibold mt-2" id="res-confidence-breakdown">-</div>
             <div class="text-[11px] text-slate-400 mt-0.5">Confident & Correct</div>
+          </div>
+        </div>
+
+        <!-- 5 Official CAB Content Areas Breakdown -->
+        <div class="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Performance by CAB Test Plan Content Area</h3>
+          <div class="space-y-2.5 text-xs" id="res-area-breakdown">
+            <!-- Dynamic Area Bars -->
           </div>
         </div>
 
@@ -282,8 +312,8 @@
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
         <div class="flex items-center justify-between mb-6">
           <div>
-            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Quiz History & Records</h2>
-            <p class="text-xs text-slate-500">Stored locally in browser storage or synced via JSON.</p>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-800">Exam History & Saved Sessions</h2>
+            <p class="text-xs text-slate-500">Click any attempt to inspect question-by-question breakdown.</p>
           </div>
           <button onclick="navigate('config-view')" class="text-xs sm:text-sm text-sky-600 hover:underline">
             &larr; Back to Builder
@@ -299,6 +329,7 @@
                 <th class="py-2.5 px-3">Score</th>
                 <th class="py-2.5 px-3">Time</th>
                 <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3 text-right">Action</th>
               </tr>
             </thead>
             <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
@@ -332,9 +363,207 @@
   <!-- QUESTION BANK EMBEDDED DATA -->
   <script id="cse-data-script">
     const QUESTION_BANK = [
-      // === CORE PRACTICE SCENARIOS ===
+      // ==========================================
+      // === CALIFORNIA HIGH-YIELD GAPS (ca_gaps) ===
+      // ==========================================
       {
-        id: "core-q1", source: "core", number: 1,
+        id: "gap-q1", source: "ca_gaps", area: "area4", number: 1,
+        text: "Under CBC Chapter 7A, which standard governs exterior wildfire exposure for building materials in a designated Very High Fire Hazard Severity Zone (VHFHSZ)?",
+        options: [
+          "Noncombustible materials or ignition-resistant materials tested per SFM Standard 12-7A",
+          "One-hour fire resistive assembly tested per ASTM E119 only",
+          "FEMA National Flood Insurance Program structural standards",
+          "CALGreen Tier 2 exterior insulation requirements"
+        ],
+        correct: 0,
+        rationale: "CBC Chapter 7A mandates that exterior walls, roofs, eaves, and glazed openings in a VHFHSZ comply with California State Fire Marshal (SFM) Standards (e.g., SFM 12-7A-1 through 12-7A-5) or use noncombustible/ignition-resistant materials to resist ember penetration and radiant heat."
+      },
+      {
+        id: "gap-q2", source: "ca_gaps", area: "area2", number: 2,
+        text: "Under California Public Resources Code § 4291 and CalFire defensible space regulations, what is the required dimension and character of 'Zone 0' around a structure?",
+        options: [
+          "0 to 5 feet from the structure, maintained as an ember-resistant zone with no combustible mulch or vegetation",
+          "5 to 30 feet from the structure, designated as the 'Lean, Clean and Green' zone",
+          "30 to 100 feet from the structure, designated as the 'Reduced Fuel' zone",
+          "Within 10 feet of public roads, requiring tree thinning"
+        ],
+        correct: 0,
+        rationale: "Zone 0 is the immediate 0 to 5 feet perimeter around the structure, designated as the ember-resistant zone where combustible materials, wood mulches, and continuous shrubs are strictly prohibited to prevent ember ignition."
+      },
+      {
+        id: "gap-q3", source: "ca_gaps", area: "area2", number: 3,
+        text: "Under California's Model Water Efficient Landscape Ordinance (MWELO), at what threshold does the ordinance apply to a new commercial construction landscape project that requires a building or plan check permit?",
+        options: [
+          "Aggregate landscape area equal to or greater than 500 sq. ft.",
+          "Aggregate landscape area equal to or greater than 2,500 sq. ft.",
+          "Only commercial projects exceeding 10,000 sq. ft. of turf",
+          "All projects regardless of size if located in an agricultural district"
+        ],
+        correct: 0,
+        rationale: "MWELO applies to new construction projects with an aggregate landscape area of 500 square feet or more requiring a permit (and rehabilitated landscapes of 2,500 sq. ft. or more)."
+      },
+      {
+        id: "gap-q4", source: "ca_gaps", area: "area2", number: 4,
+        text: "Under the Alquist-Priolo Earthquake Fault Zoning Act, what is the default restriction regarding placing a new structure intended for human occupancy near an active earthquake fault trace?",
+        options: [
+          "The building must be set back at least 50 feet from the identified active fault trace unless proven otherwise by a geologic investigation",
+          "The building may cross the fault trace if supported on seismic base isolators",
+          "No structures can be built within 500 feet of an Alquist-Priolo zone boundary",
+          "Only buildings classified as Risk Category IV are prohibited within the zone"
+        ],
+        correct: 0,
+        rationale: "The Alquist-Priolo Act assumes an active fault trace is hazardous for human occupancy structures and requires a minimum 50-foot setback unless a site-specific geologic trenching investigation establishes a different safe setback."
+      },
+      {
+        id: "gap-q5", source: "ca_gaps", area: "area2", number: 5,
+        text: "What is the primary difference between the Alquist-Priolo Act and the California Seismic Hazards Mapping Act?",
+        options: [
+          "Alquist-Priolo regulates surface fault rupture hazards; the Seismic Hazards Mapping Act regulates earthquake-induced ground shaking, liquefaction, and landslides",
+          "Alquist-Priolo regulates high-rise buildings; Seismic Hazards Mapping regulates residential homes",
+          "Alquist-Priolo applies only to Northern California; Seismic Hazards Mapping applies statewide",
+          "Alquist-Priolo is administered by DSA; Seismic Hazards Mapping is administered by HCAI"
+        ],
+        correct: 0,
+        rationale: "The Alquist-Priolo Earthquake Fault Zoning Act addresses surface fault rupture hazard exclusively, whereas the Seismic Hazards Mapping Act (PRC § 2690+) identifies zones subject to strong ground shaking, soil liquefaction, and earthquake-induced landslides."
+      },
+      {
+        id: "gap-q6", source: "ca_gaps", area: "area4", number: 6,
+        text: "What legal protection is granted to a California commercial property owner who obtains an inspection and report by a Certified Access Specialist (CASp) under California Senate Bill 1186?",
+        options: [
+          "A 90-day stay of court proceedings and an early evaluation conference in the event of an accessibility lawsuit",
+          "A total exemption from compliance with future California Building Code Title 24 updates",
+          "Waiver of the 20% path of travel spending obligation under Section 11B-202.4",
+          "Immunization against federal Department of Justice civil rights actions"
+        ],
+        correct: 0,
+        rationale: "Under SB 1186 (Civil Code § 55.54), obtaining a CASp inspection report prior to being sued establishes 'qualified defendant' status, granting the owner the right to a 90-day court stay, an early settlement conference, and potential reductions in statutory minimum damages."
+      },
+      {
+        id: "gap-q7", source: "ca_gaps", area: "area2", number: 7,
+        text: "According to Division of the State Architect (DSA) Interpretation of Regulations IR A-22, when is a public school modernization project exempt from DSA structural plan review?",
+        options: [
+          "Non-structural alterations where the estimated construction cost does not exceed the statutory threshold and the work does not affect structural elements or life-safety",
+          "Any project under $1,000,000 regardless of structural alterations",
+          "All campus athletic fields and shade structures",
+          "Work designed and stamped by a licensed civil engineer rather than an architect"
+        ],
+        correct: 0,
+        rationale: "Under DSA IR A-22 and Education Code § 17295, minor non-structural alterations below the annual statutory cost threshold that do not affect the lateral force-resisting system, load-bearing components, or required egress are exempt from DSA plan approval."
+      },
+      {
+        id: "gap-q8", source: "ca_gaps", area: "area2", number: 8,
+        text: "An architect is designing an outpatient surgical clinic that will not have overnight patient stay beds. Under California Department of Health Care Access and Information (HCAI, formerly OSHPD) classification, what is this facility?",
+        options: [
+          "HCAI 3, which is reviewed by the local city/county building department rather than directly by HCAI",
+          "HCAI 1, which requires full direct HCAI field inspection and Field Act compliance",
+          "HCAI 4, which is exempt from all Title 24 provisions",
+          "HCAI 2, which requires DSA review"
+        ],
+        correct: 0,
+        rationale: "HCAI 1 applies to acute care inpatient hospitals; HCAI 3 applies to licensed clinics (outpatient surgical, dialysis, etc.). HCAI 3 plans are reviewed and enforced by local municipal building jurisdictions using Title 24 standards, not direct HCAI staff."
+      },
+      {
+        id: "gap-q9", source: "ca_gaps", area: "area1", number: 9,
+        text: "Under California Business & Professions Code § 5536.22, which specific statutory notice regarding the California Architects Board must be included in every written contract for architectural services?",
+        options: [
+          "A statement stating that architects are licensed and regulated by the California Architects Board along with the Board's contact information",
+          "The architect's professional liability policy number and deductible",
+          "The date the architect passed the California Supplemental Exam",
+          "A statement that all dispute settlements over $5,000 must be arbitrated"
+        ],
+        correct: 0,
+        rationale: "B&P Code § 5536.22(a)(8) explicitly mandates that written architectural contracts contain a prominent statement that architects are licensed and regulated by the California Architects Board, including the Board’s address and telephone number."
+      },
+      {
+        id: "gap-q10", source: "ca_gaps", area: "area1", number: 10,
+        text: "To maintain an active California architect license, what mandatory continuing education coursework must licensees complete prior to each biennial renewal?",
+        options: [
+          "5 hours on California accessibility requirements (Title 24/ADA) and 5 hours on zero net carbon / energy design",
+          "12 hours of general health, safety, and welfare (HSW) with no specific topics",
+          "24 hours of AIA learning units without state reporting",
+          "Only coursework in California contract law"
+        ],
+        correct: 0,
+        rationale: "California B&P Code § 5600.05 mandates 5 hours of coursework in disability access requirements and (effective recent renewals) 5 hours in Zero Net Carbon (ZNC) design as a condition of biennial license renewal."
+      },
+      {
+        id: "gap-q11", source: "ca_gaps", area: "area2", number: 11,
+        text: "When an architect proposes to perform work that alters the natural flow of a river, stream, or lake in California, which state agency requires a Lake and Streambed Alteration (LSA) Agreement under Fish & Game Code § 1602?",
+        options: [
+          "California Department of Fish and Wildlife (CDFW)",
+          "California Department of Water Resources (DWR)",
+          "California Coastal Commission",
+          "State Water Resources Control Board"
+        ],
+        correct: 0,
+        rationale: "The California Department of Fish and Wildlife (CDFW) enforces § 1602 of the Fish and Game Code, requiring notification and an LSA Agreement prior to any activity that substantially alters the bed, bank, or channel of a stream or lake."
+      },
+      {
+        id: "gap-q12", source: "ca_gaps", area: "area2", number: 12,
+        text: "Under CEQA, what is the legal significance of a project applicant receiving a 'Notice of Determination' (NOD) that is stamped and posted by the county clerk?",
+        options: [
+          "It triggers a short 30-day statute of limitations for legal challenges against the CEQA approval",
+          "It automatically issues the building permit",
+          "It exempts the architect from liability for environmental omissions",
+          "It certifies the project under the National Environmental Policy Act"
+        ],
+        correct: 0,
+        rationale: "Filing and posting an NOD (following EIR or Neg Dec approval) reduces the statute of limitations to file a court challenge under CEQA from 180 days down to 30 days."
+      },
+      {
+        id: "gap-q13", source: "ca_gaps", area: "area4", number: 13,
+        text: "Under CBC Chapter 11B Section 11B-404.2.4.1, what is the minimum maneuvering clearance required on the pull side of a front-approach manual swinging exterior door?",
+        options: [
+          "60 inches perpendicular to the doorway and 18 inches clearance beyond the strike jamb",
+          "48 inches perpendicular to the doorway and 12 inches clearance beyond the strike jamb",
+          "60 inches perpendicular to the doorway and 24 inches clearance beyond the strike jamb",
+          "48 inches perpendicular to the doorway and 0 inches clearance beyond the strike jamb"
+        ],
+        correct: 0,
+        rationale: "CBC 11B Table 11B-404.2.4.1 requires a minimum 60 inches perpendicular to the door opening and 18 inches of strike-side clearance for a front approach on the pull side."
+      },
+      {
+        id: "gap-q14", source: "ca_gaps", area: "area4", number: 14,
+        text: "Under CALGreen Section 5.106.5.3, what is required for non-residential new construction projects with respect to Electric Vehicle (EV) infrastructure?",
+        options: [
+          "Providing EV spaces equipped with raceways, panel capacity, and designated EV Charging Stations (EVCS) calculated as a percentage of total parking spaces",
+          "Only providing conduits for parking lots with more than 500 parking stalls",
+          "Installing commercial Level 3 DC fast chargers at every employee parking space",
+          "Commercial facilities are exempt if connected to public transit"
+        ],
+        correct: 0,
+        rationale: "CALGreen non-residential standards mandate calculated percentages of total parking stalls to be EV Capable (raceways and panel space), EV Ready (circuits installed), and operational EVCS."
+      },
+      {
+        id: "gap-q15", source: "ca_gaps", area: "area5", number: 15,
+        text: "Under California Civil Code § 8814, within how many days after an owner releases retainage to a prime contractor must the prime contractor pay retainage to their subcontractors?",
+        options: [
+          "7 days, subject to a 2% per month penalty for wrongful withholding",
+          "10 days with no penalty",
+          "30 days per standard AIA A201 terms",
+          "At the expiration of the 90-day lien window"
+        ],
+        correct: 0,
+        rationale: "California prompt payment statutes (Civil Code § 8814) require direct contractors to disburse retention to subcontractors within 7 days of receiving funds from the owner, or face a 2% monthly penalty plus attorney fees."
+      },
+      {
+        id: "gap-q16", source: "ca_gaps", area: "area5", number: 16,
+        text: "What is the primary difference under California law between a patent construction defect and a latent construction defect?",
+        options: [
+          "Patent defects are apparent by reasonable inspection (4-year statute of limitation); latent defects are hidden/subsurface (10-year statute of repose)",
+          "Patent defects involve structural systems; latent defects involve finish work",
+          "Patent defects can only be filed by original owners; latent defects can be filed by any subsequent buyer",
+          "Patent defects are governed by CEQA; latent defects are governed by the Field Act"
+        ],
+        correct: 0,
+        rationale: "Under CCP § 337.1 and § 337.15, patent defects are visible or discoverable by reasonable inspection (4-year limit), whereas latent defects are deficiencies not readily observable upon inspection (10-year statute of repose from substantial completion)."
+      },
+
+      // ==========================================
+      // === CORE PRACTICE SCENARIOS (core) =======
+      // ==========================================
+      {
+        id: "core-q1", source: "core", area: "area1", number: 1,
         text: "Under California Business and Professions Code § 5536.22 (Architects Practice Act), which of the following is NOT an explicit statutory requirement for an architect's written agreement for professional services?",
         options: [
           "Description of services to be provided",
@@ -346,7 +575,7 @@
         rationale: "B&P Code § 5536.22 requires scope of work, compensation method, client/architect info, and additional services procedures. It does NOT legally require professional liability insurance to be provided or stated."
       },
       {
-        id: "core-q2", source: "core", number: 2,
+        id: "core-q2", source: "core", area: "area2", number: 2,
         text: "Under the California Environmental Quality Act (CEQA), if an Initial Study shows that a proposed project may have significant environmental impacts, but the applicant agrees to design revisions that eliminate or reduce them below significant levels, what document should the lead agency prepare?",
         options: [
           "Notice of Exemption (NOE)",
@@ -358,7 +587,7 @@
         rationale: "When revisions made in the project plans before public review mitigate significant effects to a point where clearly no significant effects occur, a Mitigated Negative Declaration (MND) is issued per CEQA Guidelines § 15070."
       },
       {
-        id: "core-q3", source: "core", number: 3,
+        id: "core-q3", source: "core", area: "area2", number: 3,
         text: "Under the California Coastal Act, an architect is designing a project within the Coastal Zone where a Local Coastal Program (LCP) has been fully certified by the California Coastal Commission. Who is the primary permit-issuing authority for the Coastal Development Permit (CDP)?",
         options: [
           "The California Coastal Commission",
@@ -370,8 +599,8 @@
         rationale: "Once an LCP has been fully certified by the Coastal Commission, the authority to issue Coastal Development Permits delegates to the local government (PRC § 30519), subject to appeals on specific coastal segments."
       },
       {
-        id: "core-q4", source: "core", number: 4,
-        text: "Under 2022/2025 CBC Chapter 11B Section 11B-202.4 (Path of Travel Requirements), when an alteration to an existing building has an adjusted construction cost exceeding the annual valuation threshold, how much must the applicant spend on path of travel improvements if not fully compliant?",
+        id: "core-q4", source: "core", area: "area4", number: 4,
+        text: "Under CBC Chapter 11B Section 11B-202.4 (Path of Travel Requirements), when an alteration to an existing building has an adjusted construction cost exceeding the annual valuation threshold, how much must the applicant spend on path of travel improvements if not fully compliant?",
         options: [
           "10% of the total adjusted construction cost",
           "20% of the total adjusted construction cost",
@@ -382,14 +611,14 @@
         rationale: "If the construction cost exceeds the valuation threshold, an unreasonable hardship exemption is not available, but if an alteration is compliant up to 20% of the adjusted construction cost, additional path of travel upgrades are not required beyond that 20% cap."
       },
       {
-        id: "core-q5", source: "core", number: 5,
+        id: "core-q5", source: "core", area: "area4", number: 5,
         text: "According to CALGreen (Title 24 Part 11) mandatory provisions for non-residential new construction, what minimum percentage of nonhazardous construction and demolition (C&D) debris must be diverted from landfills?",
         options: ["50%", "65%", "75%", "100%"],
         correct: 1,
         rationale: "CALGreen Section 5.408.1 mandates recycling and/or salvaging for reuse a minimum of 65% of nonhazardous construction and demolition waste."
       },
       {
-        id: "core-q6", source: "core", number: 6,
+        id: "core-q6", source: "core", area: "area2", number: 6,
         text: "Which California state agency has exclusive plan review and construction inspection authority over structural safety and accessibility for public K-12 schools and community colleges under the Field Act?",
         options: [
           "Department of Housing and Community Development (HCD)",
@@ -401,14 +630,14 @@
         rationale: "The Division of the State Architect (DSA) enforces the Field Act for structural safety and Title 24 accessibility for California K-12 public schools and community colleges."
       },
       {
-        id: "core-q7", source: "core", number: 7,
+        id: "core-q7", source: "core", area: "area5", number: 7,
         text: "Under California Civil Code, within how many days after an owner records a valid 'Notice of Completion' must a prime contractor file a Mechanic's Lien?",
         options: ["30 days", "60 days", "90 days", "120 days"],
         correct: 1,
         rationale: "Per California Civil Code § 8412, when a valid Notice of Completion or Notice of Cessation is recorded, the direct (prime) contractor has 60 days to record a mechanic's lien (subcontractors have 30 days per § 8414). Without a notice, all parties have 90 days."
       },
       {
-        id: "core-q8", source: "core", number: 8,
+        id: "core-q8", source: "core", area: "area1", number: 8,
         text: "Under the California Architects Practice Act, which of the following is an architect permitted to seal/stamp?",
         options: [
           "Plans prepared by a licensed general contractor for design-build",
@@ -420,16 +649,18 @@
         rationale: "B&P Code § 5536.1 and Title 16 CCR § 151 require that architects only sign and stamp plans prepared under their direct 'responsible control'."
       },
 
-      // === EXAM 1 (1 to 70) ===
+      // ==========================================
+      // === EXAM 1 (exam1) =======================
+      // ==========================================
       {
-        id: "e1-q1", source: "exam1", number: 1,
+        id: "e1-q1", source: "exam1", area: "area3", number: 1,
         text: "Which of the following types of soil have the best bearing capacity?",
         options: ["Clay", "Sandy", "Gravel", "Silty"],
         correct: 2,
-        rationale: "Gravel has the highest bearing capacity, followed by sandy soil, clay, and lastly silty soil."
+        rationale: "Gravel has the highest bearing capacity, followed by sandy soil, clay, and lastly silty soil[cite: 2]."
       },
       {
-        id: "e1-q2", source: "exam1", number: 2,
+        id: "e1-q2", source: "exam1", area: "area2", number: 2,
         text: "What is the purpose of the Environmental Protection Agency's National Priorities List (NPL)?",
         options: [
           "Identifies hazardous sites that need to be cleaned up through the Superfund program",
@@ -438,31 +669,31 @@
           "Identifies business operations that emit large quantities of greenhouse gas that is regulated by the Climate Action Plan"
         ],
         correct: 0,
-        rationale: "The National Priorities List (NPL) identifies priority hazardous waste sites for cleanup under the Federal Superfund program."
+        rationale: "The National Priorities List (NPL) identifies priority hazardous waste sites for cleanup under the Federal Superfund program[cite: 2]."
       },
       {
-        id: "e1-q3", source: "exam1", number: 3,
+        id: "e1-q3", source: "exam1", area: "area2", number: 3,
         text: "Which of the following is NOT one of six principal pollutants identified by EPA in its National Air Quality Standards?",
         options: ["Carbon Dioxide", "Nitrogen Dioxide", "Sulfur Dioxide", "Lead"],
         correct: 0,
-        rationale: "The 6 criteria pollutants under NAAQS are Carbon Monoxide, Lead, Nitrogen Dioxide, Ozone, Particle Pollution (PM), and Sulfur Dioxide. Carbon Dioxide is not one of the six."
+        rationale: "The 6 criteria pollutants under NAAQS are Carbon Monoxide, Lead, Nitrogen Dioxide, Ozone, Particle Pollution (PM), and Sulfur Dioxide[cite: 2]. Carbon Dioxide is not one of the six[cite: 2]."
       },
       {
-        id: "e1-q4", source: "exam1", number: 4,
+        id: "e1-q4", source: "exam1", area: "area1", number: 4,
         text: "What effects do user characteristics have on architectural programming?\nA. Favoring some adjacencies over others\nB. Altering circulation patterns\nC. Affecting the size of program spaces\nD. Creating a need for additional program spaces based on needs of culture, age, disability, etc.",
         options: ["A, B and C", "A, C and D", "B, C and D", "All of the above"],
         correct: 3,
-        rationale: "User characteristics such as age, accessibility needs, and group dynamics affect all spatial adjacencies, sizing, and circulation requirements."
+        rationale: "User characteristics such as age, accessibility needs, and group dynamics affect all spatial adjacencies, sizing, and circulation requirements[cite: 2]."
       },
       {
-        id: "e1-q5", source: "exam1", number: 5,
+        id: "e1-q5", source: "exam1", area: "area3", number: 5,
         text: "Identify the version of the LEED rating system launched in November 2013:",
         options: ["LEED 2009", "LEED 2013", "LEED v3", "LEED v4"],
         correct: 3,
-        rationale: "LEED v4 was introduced in November 2013 at Greenbuild."
+        rationale: "LEED v4 was introduced in November 2013 at Greenbuild[cite: 2]."
       },
       {
-        id: "e1-q6", source: "exam1", number: 6,
+        id: "e1-q6", source: "exam1", area: "area1", number: 6,
         text: "Which of the following is an effective method you would use to solicit stakeholder input?",
         options: [
           "Schedule a scoping meeting with the agency having jurisdiction",
@@ -471,24 +702,24 @@
           "Publish article in local newspapers describing positive aspects of your project"
         ],
         correct: 1,
-        rationale: "Design charrettes are active collaborative workshops specifically designed to elicit community and stakeholder input."
+        rationale: "Design charrettes are active collaborative workshops specifically designed to elicit community and stakeholder input[cite: 2]."
       },
       {
-        id: "e1-q7", source: "exam1", number: 7,
+        id: "e1-q7", source: "exam1", area: "area1", number: 7,
         text: "Other than using a 'Bubble Diagram' what is another tool for analyzing spatial relationships?",
         options: ["Adjacency Matrix", "Relationship Map", "Adjacency Chart", "Relationship Diagram"],
         correct: 0,
-        rationale: "An Adjacency Matrix is the standard architectural tool used alongside bubble diagrams to evaluate relationships."
+        rationale: "An Adjacency Matrix is the standard architectural tool used alongside bubble diagrams to evaluate relationships[cite: 2]."
       },
       {
-        id: "e1-q8", source: "exam1", number: 8,
+        id: "e1-q8", source: "exam1", area: "area1", number: 8,
         text: "Which of the following is a factor that should typically be considered when estimating the initial project cost of a project during programming phase?",
         options: ["Cost of finish materials", "Cost of utilities and infrastructure", "Labor cost relative to the geographic location of the project", "Escalation"],
         correct: 3,
-        rationale: "Escalation accounts for inflation across the multi-year duration of design and construction, making it critical even at the programming stage."
+        rationale: "Escalation accounts for inflation across the multi-year duration of design and construction, making it critical even at the programming stage[cite: 2]."
       },
       {
-        id: "e1-q9", source: "exam1", number: 9,
+        id: "e1-q9", source: "exam1", area: "area2", number: 9,
         text: "Which of the following are projects exempt from the provisions of the California Environmental Quality Act (CEQA)?",
         options: [
           "In an urbanized area, a construction project with a scope of four single-family units",
@@ -497,10 +728,10 @@
           "A maintenance project of 2 miles within a public street"
         ],
         correct: 1,
-        rationale: "Per CEQA categorical exemptions (Class 3), accessory structures like garages are exempt. Note: urban single-family exemptions cover up to 3 units, maintenance in streets covers up to 1 mile, and only emergency repairs are exempt."
+        rationale: "Per CEQA categorical exemptions (Class 3), accessory structures like garages are exempt[cite: 2]. Note: urban single-family exemptions cover up to 3 units, maintenance in streets covers up to 1 mile, and only emergency repairs are exempt[cite: 2]."
       },
       {
-        id: "e1-q10", source: "exam1", number: 10,
+        id: "e1-q10", source: "exam1", area: "area3", number: 10,
         text: "Which of the following is the correct qualification of inspectors for Essential Services Buildings?",
         options: [
           "Meet the qualification for inspectors as specified by the California Division of State Architect",
@@ -509,24 +740,24 @@
           "Certified by the State of California"
         ],
         correct: 2,
-        rationale: "Inspectors must be certified by ICBO / ICC according to the Essential Services Buildings Seismic Safety Act."
+        rationale: "Inspectors must be certified by ICBO / ICC according to the Essential Services Buildings Seismic Safety Act[cite: 2]."
       },
       {
-        id: "e1-q11", source: "exam1", number: 11,
+        id: "e1-q11", source: "exam1", area: "area3", number: 11,
         text: "Besides the structural system what other components of an essential services building are regulated by the Essential Services Building Seismic Safety Act?\nA. Communication System\nB. Main Transformer\nC. Switch Gear\nD. Intercom system\nE. Emergency backup system",
         options: ["A, B and C", "A, B, C and E", "B, C, D and E", "All of the above"],
         correct: 1,
-        rationale: "The Act protects vital operational systems (communication with field emergency units, power transformers, switch gear, emergency backup). An internal intercom (D) is not regulated under the Act."
+        rationale: "The Act protects vital operational systems (communication with field emergency units, power transformers, switch gear, emergency backup)[cite: 2]. An internal intercom (D) is not regulated under the Act[cite: 2]."
       },
       {
-        id: "e1-q12", source: "exam1", number: 12,
+        id: "e1-q12", source: "exam1", area: "area3", number: 12,
         text: "Other than the California Green Building Standards Code, what other code or regulation also have provisions concerning sustainability?",
         options: ["California Water Code", "California Historical Building Code", "California Clean Air Act", "Field Act"],
         correct: 1,
-        rationale: "The California Historical Building Code (CHBC) expressly includes sustainability principles in its intent section to facilitate reuse and conservation."
+        rationale: "The California Historical Building Code (CHBC) expressly includes sustainability principles in its intent section to facilitate reuse and conservation[cite: 2]."
       },
       {
-        id: "e1-q13", source: "exam1", number: 13,
+        id: "e1-q13", source: "exam1", area: "area3", number: 13,
         text: "Per the structural provisions of the California Building Code, which of the following is a load bearing wall?",
         options: [
           "A wood stud wall that supports more than 50 lbs per lineal foot",
@@ -535,24 +766,24 @@
           "A reinforced concrete wall that supports more than 200 lbs per lineal foot"
         ],
         correct: 3,
-        rationale: "A load-bearing wall supports more than 200 lbs per lineal foot of superimposed vertical load."
+        rationale: "A load-bearing wall supports more than 200 lbs per lineal foot of superimposed vertical load[cite: 2]."
       },
       {
-        id: "e1-q14", source: "exam1", number: 14,
+        id: "e1-q14", source: "exam1", area: "area3", number: 14,
         text: "The California Building Code specifies that non-load bearing partitions are to be isolated from the structural system by which of the following?",
         options: ["Compression struts", "Slip tracks", "Deflection isolators", "Flex clips"],
         correct: 1,
-        rationale: "Slip tracks accommodate structural floor/roof deflection without imposing vertical loads onto interior partitions."
+        rationale: "Slip tracks accommodate structural floor/roof deflection without imposing vertical loads onto interior partitions[cite: 2]."
       },
       {
-        id: "e1-q15", source: "exam1", number: 15,
+        id: "e1-q15", source: "exam1", area: "area4", number: 15,
         text: "Provisions for which of the following building functions or building components are included in Chapter 11B of the California Building Code?",
         options: ["Mechanical Access Parking Garage", "Teletypewriter (TTY)", "Electric Vehicle Charging Station (EVCS)", "Destination-oriented Elevator"],
         correct: 2,
-        rationale: "Section 11B-228 of the CBC contains extensive California-specific standards for Electric Vehicle Charging Stations (EVCS)."
+        rationale: "Section 11B-228 of the CBC contains extensive California-specific standards for Electric Vehicle Charging Stations (EVCS)[cite: 2]."
       },
       {
-        id: "e1-q16", source: "exam1", number: 16,
+        id: "e1-q16", source: "exam1", area: "area4", number: 16,
         text: "According to the California Building Code when you have two exit stairs required to be separated by at least half the floor diagonal, how is this distance measured?",
         options: [
           "From the center point of the doorway of the stair enclosure to the center point of the doorway of the other stair enclosure",
@@ -561,10 +792,10 @@
           "The distance between the closest risers of the exit access stairways"
         ],
         correct: 3,
-        rationale: "For exit access stairways, measurement is taken between the closest risers of the respective stairs."
+        rationale: "For exit access stairways, measurement is taken between the closest risers of the respective stairs[cite: 2]."
       },
       {
-        id: "e1-q17", source: "exam1", number: 17,
+        id: "e1-q17", source: "exam1", area: "area4", number: 17,
         text: "A third exit stair is required for which of the following?",
         options: [
           "A high-rise building with occupied floors above the height of 120 ft.",
@@ -573,17 +804,17 @@
           "A high-rise building with occupied floors above the height of 600 ft."
         ],
         correct: 2,
-        rationale: "CBC Section 403 requires buildings with occupied floors greater than 420 feet in height to provide an additional exit stairway."
+        rationale: "CBC Section 403 requires buildings with occupied floors greater than 420 feet in height to provide an additional exit stairway[cite: 2]."
       },
       {
-        id: "e1-q18", source: "exam1", number: 18,
+        id: "e1-q18", source: "exam1", area: "area3", number: 18,
         text: "Which of the following is NOT regulated by the California Energy Code (Title 24 Part 6)?",
         options: ["Indoor lighting systems", "Outdoor lighting systems", "Signs located either indoors or outdoors", "None of the above, they are all regulated"],
         correct: 3,
-        rationale: "All three categories (indoor lighting, outdoor lighting, and signs) are strictly regulated under the California Energy Code."
+        rationale: "All three categories (indoor lighting, outdoor lighting, and signs) are strictly regulated under the California Energy Code[cite: 2]."
       },
       {
-        id: "e1-q19", source: "exam1", number: 19,
+        id: "e1-q19", source: "exam1", area: "area4", number: 19,
         text: "According to the Retail Food Code, floor drains are required in food facilities with which of the following conditions?",
         options: [
           "In areas where the floors are water-flushed for cleaning",
@@ -592,17 +823,17 @@
           "In areas where the floor surfaces are less than 1:50 in slope"
         ],
         correct: 0,
-        rationale: "Floor drains are required in food preparation facilities where floors are cleaned by water-flushing."
+        rationale: "Floor drains are required in food preparation facilities where floors are cleaned by water-flushing[cite: 2]."
       },
       {
-        id: "e1-q20", source: "exam1", number: 20,
+        id: "e1-q20", source: "exam1", area: "area5", number: 20,
         text: "Which of the following are required to file a Preliminary 20-Day Notice in order to preserve their right to record a Mechanic's Lien?\nA. Prime Contractor\nB. Sub-Contractor\nC. Material Supplier\nD. Architect (Direct Contract)",
         options: ["A and B", "B and C", "A, B and C", "All of the above"],
         correct: 1,
-        rationale: "Claimants without direct contractual relationships to the owner (subcontractors and material suppliers) must serve a Preliminary 20-Day Notice."
+        rationale: "Claimants without direct contractual relationships to the owner (subcontractors and material suppliers) must serve a Preliminary 20-Day Notice[cite: 2]."
       },
       {
-        id: "e1-q21", source: "exam1", number: 21,
+        id: "e1-q21", source: "exam1", area: "area3", number: 21,
         text: "Which of the following are required by the California Hospital Facilities Seismic Safety Act to meet seismic standards?",
         options: [
           "All new acute care in-patient hospitals",
@@ -611,10 +842,10 @@
           "All acute care in-patient hospitals more than 2 stories and other than type V construction"
         ],
         correct: 1,
-        rationale: "The Alfred E. Alquist Hospital Facilities Seismic Safety Act applies to all acute care in-patient hospitals, requiring both new and existing structures to comply."
+        rationale: "The Alfred E. Alquist Hospital Facilities Seismic Safety Act applies to all acute care in-patient hospitals, requiring both new and existing structures to comply[cite: 2]."
       },
       {
-        id: "e1-q22", source: "exam1", number: 22,
+        id: "e1-q22", source: "exam1", area: "area2", number: 22,
         text: "The Field Act applies to which of the following?",
         options: [
           "All public schools except charter schools",
@@ -623,17 +854,17 @@
           "All public schools, community colleges, University of California and California State University buildings"
         ],
         correct: 2,
-        rationale: "The Field Act covers public elementary and secondary schools (K-12) and community colleges under DSA jurisdiction. (UC/CSU are not subject to the Field Act)."
+        rationale: "The Field Act covers public elementary and secondary schools (K-12) and community colleges under DSA jurisdiction[cite: 2]. (UC/CSU are not subject to the Field Act)[cite: 2]."
       },
       {
-        id: "e1-q23", source: "exam1", number: 23,
+        id: "e1-q23", source: "exam1", area: "area1", number: 23,
         text: "The Architects Practice Act requires licensees to report to the California Architects Board any civil action judgments, settlements, or arbitration awards of which amount?",
         options: ["$1,000 or greater", "$2,000 or greater", "$5,000 or greater", "$10,000 or greater"],
         correct: 2,
-        rationale: "B&P Code § 5588 requires reporting settlements or judgments of $5,000 or greater within 30 days."
+        rationale: "B&P Code § 5588 requires reporting settlements or judgments of $5,000 or greater within 30 days[cite: 2]."
       },
       {
-        id: "e1-q24", source: "exam1", number: 24,
+        id: "e1-q24", source: "exam1", area: "area1", number: 24,
         text: "Which of the following is a condition where the Architect is NOT required to have a written contract with the Client?",
         options: [
           "The Architect is designing a townhouse in a development he had designed an identical townhouse for the mother of his client",
@@ -642,10 +873,10 @@
           "The Architect is designing a chain retail store in a mall for a national chain which he had designed an identical store for previously"
         ],
         correct: 3,
-        rationale: "B&P Code § 5536.22 exempts architectural services of the same general kind which the architect has previously rendered to and received payment from the same client."
+        rationale: "B&P Code § 5536.22 exempts architectural services of the same general kind which the architect has previously rendered to and received payment from the same client[cite: 2]."
       },
       {
-        id: "e1-q25", source: "exam1", number: 25,
+        id: "e1-q25", source: "exam1", area: "area1", number: 25,
         text: "According to the Architects Practice Act, which of the following actions by an unlicensed individual qualifies as practicing architecture without a license?",
         options: [
           "Use a stamp that bears the legend 'Building Designer'",
@@ -654,10 +885,10 @@
           "Distribute business cards that bear the title 'Architectural Designer'"
         ],
         correct: 0,
-        rationale: "Using professional-style stamps or holding out as an architect/building designer in commercial practice is prohibited."
+        rationale: "Using professional-style stamps or holding out as an architect/building designer in commercial practice is prohibited[cite: 2]."
       },
       {
-        id: "e1-q26", source: "exam1", number: 26,
+        id: "e1-q26", source: "exam1", area: "area1", number: 26,
         text: "Which of the following represents the exempt residential project under the California Architects Practice Act?",
         options: [
           "Multiple dwellings with no more than 4 dwelling units of wood frame construction, not more than 2 stories and a basement in height",
@@ -666,10 +897,10 @@
           "Multiple dwellings with no more than 3 dwelling units of wood frame construction, not more than 3 stories and a basement in height"
         ],
         correct: 0,
-        rationale: "B&P Code § 5537 exempts multi-family dwellings of no more than 4 units of wood frame construction, not more than 2 stories and basement."
+        rationale: "B&P Code § 5537 exempts multi-family dwellings of no more than 4 units of wood frame construction, not more than 2 stories and basement[cite: 2]."
       },
       {
-        id: "e1-q27", source: "exam1", number: 27,
+        id: "e1-q27", source: "exam1", area: "area1", number: 27,
         text: "Which of the following is NOT a rule of professional conduct in the California Code of Regulations Title 16?",
         options: [
           "An architect shall only accept work that he/she is qualified to perform by education, training, and experience",
@@ -678,10 +909,10 @@
           "Whenever the Board is conducting an investigation, an architect is required to respond within 30 days"
         ],
         correct: 1,
-        rationale: "The standard of care rule states an architect shall exercise reasonable skill and care. 'Responsible control' is a statutory definition for sealing documents, not phrased as this conduct rule."
+        rationale: "The standard of care rule states an architect shall exercise reasonable skill and care[cite: 2]. 'Responsible control' is a statutory definition for sealing documents, not phrased as this conduct rule[cite: 2]."
       },
       {
-        id: "e1-q28", source: "exam1", number: 28,
+        id: "e1-q28", source: "exam1", area: "area1", number: 28,
         text: "Which of the following acts governs professional corporations in California?",
         options: [
           "Brown Reagan Professional Corporation Act",
@@ -690,10 +921,10 @@
           "Moscone Knox Professional Corporation Act"
         ],
         correct: 3,
-        rationale: "The Moscone-Knox Professional Corporation Act (CA Corp Code § 13400) governs professional corporations."
+        rationale: "The Moscone-Knox Professional Corporation Act (CA Corp Code § 13400) governs professional corporations[cite: 2]."
       },
       {
-        id: "e1-q29", source: "exam1", number: 29,
+        id: "e1-q29", source: "exam1", area: "area2", number: 29,
         text: "Variances are typically granted for properties to allow for which of the following?",
         options: [
           "Special uses not enjoyed by nearby, similarly zoned land",
@@ -702,10 +933,10 @@
           "Relaxation of design guidelines that supplements zoning control"
         ],
         correct: 2,
-        rationale: "A variance allows waiver of physical development standards (setbacks, height, FAR) due to site hardship, but NEVER allows a use variance in California."
+        rationale: "A variance allows waiver of physical development standards (setbacks, height, FAR) due to site hardship, but NEVER allows a use variance in California[cite: 2]."
       },
       {
-        id: "e1-q30", source: "exam1", number: 30,
+        id: "e1-q30", source: "exam1", area: "area4", number: 30,
         text: "Which of the following is true of the accessibility provisions of the California Building Code and the ADA Standards?",
         options: [
           "The 2 documents are exactly the same",
@@ -714,45 +945,45 @@
           "The state never adopted ADA guidelines"
         ],
         correct: 1,
-        rationale: "Meeting CBC Chapter 11B satisfies ADA, but meeting federal ADA alone does not ensure California compliance, as CBC contains more stringent requirements."
+        rationale: "Meeting CBC Chapter 11B satisfies ADA, but meeting federal ADA alone does not ensure California compliance, as CBC contains more stringent requirements[cite: 2]."
       },
       {
-        id: "e1-q31", source: "exam1", number: 31,
+        id: "e1-q31", source: "exam1", area: "area2", number: 31,
         text: "Which of the following is the document issued by the FAA in response to proposed developments adjacent to airport facilities?",
         options: ["Aviation Advisory Circular", "Letter of Permission", "Non-Obstruction Permit", "Airspace Determination"],
         correct: 0,
-        rationale: "Advisory Circulars and official determinations address obstructions to navigable airspace."
+        rationale: "Advisory Circulars and official determinations address obstructions to navigable airspace[cite: 2]."
       },
       {
-        id: "e1-q32", source: "exam1", number: 32,
+        id: "e1-q32", source: "exam1", area: "area2", number: 32,
         text: "Which of the following is the environmental study document required per the National Environmental Policy Act (NEPA)?",
         options: ["Environmental Impact Study", "Environmental Impact Statement (EIS)", "Environmental Impact Survey", "Environmental Impact Summary"],
         correct: 1,
-        rationale: "Under federal NEPA, an Environmental Impact Statement (EIS) is prepared (as opposed to an EIR under California CEQA)."
+        rationale: "Under federal NEPA, an Environmental Impact Statement (EIS) is prepared (as opposed to an EIR under California CEQA)[cite: 2]."
       },
       {
-        id: "e1-q33", source: "exam1", number: 33,
+        id: "e1-q33", source: "exam1", area: "area3", number: 33,
         text: "Which of the following is an organization that develops consensus standards for construction materials and systems?",
         options: ["Underwriters Laboratories (UL)", "Factory Mutual (FM)", "American Society for Testing and Materials (ASTM)", "Warnock Hersey (WH)"],
         correct: 2,
-        rationale: "ASTM develops material and test standards; UL and Warnock Hersey are primarily testing and certifying laboratories."
+        rationale: "ASTM develops material and test standards; UL and Warnock Hersey are primarily testing and certifying laboratories[cite: 2]."
       },
       {
-        id: "e1-q34", source: "exam1", number: 34,
+        id: "e1-q34", source: "exam1", area: "area3", number: 34,
         text: "AISC 360 is a national design standard for which of the following?",
         options: ["Wood", "Concrete", "Masonry", "Steel"],
         correct: 3,
-        rationale: "AISC is the American Institute of Steel Construction."
+        rationale: "AISC is the American Institute of Steel Construction[cite: 2]."
       },
       {
-        id: "e1-q35", source: "exam1", number: 35,
+        id: "e1-q35", source: "exam1", area: "area2", number: 35,
         text: "Which local agency is designated as a California Certified Unified Program Agency (CUPA)?",
         options: ["Local Building Department", "Local Fire Department", "Local Public Works Department", "Local Environmental Health Department"],
         correct: 1,
-        rationale: "Local Fire Departments (or Environmental Health Departments in some counties) serve as the CUPA for hazardous materials programs."
+        rationale: "Local Fire Departments (or Environmental Health Departments in some counties) serve as the CUPA for hazardous materials programs[cite: 2]."
       },
       {
-        id: "e1-q36", source: "exam1", number: 36,
+        id: "e1-q36", source: "exam1", area: "area2", number: 36,
         text: "Which of the following is NOT a responsibility of Regional Water Quality Control Boards (RWQCB)?",
         options: [
           "Certifies operators of wastewater treatment facilities",
@@ -761,31 +992,31 @@
           "Implement BMPs to control pollutants in stormwater"
         ],
         correct: 0,
-        rationale: "Operator certification is handled at the State Water Resources Control Board level, not the Regional Boards."
+        rationale: "Operator certification is handled at the State Water Resources Control Board level, not the Regional Boards[cite: 2]."
       },
       {
-        id: "e1-q37", source: "exam1", number: 37,
+        id: "e1-q37", source: "exam1", area: "area2", number: 37,
         text: "In addition to the San Francisco Bay Conservation and Development Commission, which of the following regions has a regional planning authority?",
         options: ["Death Valley", "Yosemite", "Lake Tahoe Basin", "Big Sur"],
         correct: 2,
-        rationale: "The Tahoe Regional Planning Agency (TRPA) is a bi-state regional environmental planning authority."
+        rationale: "The Tahoe Regional Planning Agency (TRPA) is a bi-state regional environmental planning authority[cite: 2]."
       },
       {
-        id: "e1-q38", source: "exam1", number: 38,
+        id: "e1-q38", source: "exam1", area: "area2", number: 38,
         text: "The Water Resources Control Board protects water quality by administering programs for which of the following?",
         options: ["Toxic Cleanup, Waste Disposal, and Storm Water", "Toxic Cleanup, Waste Disposal, and Recycling", "Toxic Cleanup, Storm Water, and Recycling", "All of the above"],
         correct: 3,
-        rationale: "The SWRCB regulates toxic cleanup, waste disposal, stormwater permits, and water recycling."
+        rationale: "The SWRCB regulates toxic cleanup, waste disposal, stormwater permits, and water recycling[cite: 2]."
       },
       {
-        id: "e1-q39", source: "exam1", number: 39,
+        id: "e1-q39", source: "exam1", area: "area2", number: 39,
         text: "Which federal agency is NOT under the jurisdiction of the GSA and permits its own building construction projects?",
         options: ["Environmental Protection Agency", "Department of Housing and Urban Development", "Federal Courts System", "Veterans Affairs Administration"],
         correct: 3,
-        rationale: "The VA has independent statutory authority to design, permit, and construct its own facilities."
+        rationale: "The VA has independent statutory authority to design, permit, and construct its own facilities[cite: 2]."
       },
       {
-        id: "e1-q40", source: "exam1", number: 40,
+        id: "e1-q40", source: "exam1", area: "area2", number: 40,
         text: "A Standard Permit issued by the U.S. Army Corps of Engineers is for which of the following?",
         options: [
           "Projects approved on an accelerated timeline",
@@ -794,10 +1025,10 @@
           "Projects with no impact on aquatic resources"
         ],
         correct: 1,
-        rationale: "Standard Individual Permits are required for projects that cause more than minimal impacts on waters of the US (as opposed to Nationwide / General Permits)."
+        rationale: "Standard Individual Permits are required for projects that cause more than minimal impacts on waters of the US (as opposed to Nationwide / General Permits)[cite: 2]."
       },
       {
-        id: "e1-q41", source: "exam1", number: 41,
+        id: "e1-q41", source: "exam1", area: "area2", number: 41,
         text: "During the CEQA process, how is the Lead Agency determined when multiple public agencies are involved?",
         options: [
           "Typically, the agency that provides utility services",
@@ -806,45 +1037,45 @@
           "The Owner selects the lead agency"
         ],
         correct: 2,
-        rationale: "Under CEQA Guidelines § 15051, the agency with broader governmental powers (such as a city or county) acts as the Lead Agency."
+        rationale: "Under CEQA Guidelines § 15051, the agency with broader governmental powers (such as a city or county) acts as the Lead Agency[cite: 2]."
       },
       {
-        id: "e1-q42", source: "exam1", number: 42,
+        id: "e1-q42", source: "exam1", area: "area2", number: 42,
         text: "Which agency is responsible for providing CEQA implementation guidelines and operating the State Clearinghouse?",
         options: ["California State Clearing Board", "Environmental Review Coordination Board", "California Unified Program Agency", "Governor's Office of Planning and Research (OPR)"],
         correct: 3,
-        rationale: "OPR develops CEQA guidelines and operates the State Clearinghouse for state-level environmental review."
+        rationale: "OPR develops CEQA guidelines and operates the State Clearinghouse for state-level environmental review[cite: 2]."
       },
       {
-        id: "e1-q43", source: "exam1", number: 43,
+        id: "e1-q43", source: "exam1", area: "area2", number: 43,
         text: "Typically what happens when there are conflicting requirements between different applicable codes and regulations?",
         options: ["The more restrictive applies", "The agency having jurisdiction will decide", "Architect can choose", "The less restrictive applies"],
         correct: 0,
-        rationale: "Standard code hierarchy principles state that where conflicts occur, the most restrictive requirement governs."
+        rationale: "Standard code hierarchy principles state that where conflicts occur, the most restrictive requirement governs[cite: 2]."
       },
       {
-        id: "e1-q44", source: "exam1", number: 44,
+        id: "e1-q44", source: "exam1", area: "area3", number: 44,
         text: "Which of the following is a responsibility of the civil engineer during Schematic Design?",
         options: ["Prepare boundary surveys", "Prepare preliminary parking layouts", "Prepare preliminary irrigation plans", "Prepare stormwater pollution prevention plans"],
         correct: 3,
-        rationale: "Civil engineers develop preliminary stormwater drainage and SWPPP strategies; boundary surveys are provided by the Owner's surveyor."
+        rationale: "Civil engineers develop preliminary stormwater drainage and SWPPP strategies; boundary surveys are provided by the Owner's surveyor[cite: 2]."
       },
       {
-        id: "e1-q45", source: "exam1", number: 45,
+        id: "e1-q45", source: "exam1", area: "area2", number: 45,
         text: "Which of the following consultants typically produces drawings for municipal planning review?",
         options: ["Landscape Architect", "Acoustical Engineer", "Structural Engineer", "Lighting Designer"],
         correct: 0,
-        rationale: "Landscape architects prepare site landscape and planting schemes, which are standard submittals for Planning / Design Review Boards."
+        rationale: "Landscape architects prepare site landscape and planting schemes, which are standard submittals for Planning / Design Review Boards[cite: 2]."
       },
       {
-        id: "e1-q46", source: "exam1", number: 46,
+        id: "e1-q46", source: "exam1", area: "area1", number: 46,
         text: "The Owner has provided you with the scope, budget, and schedule. What additional item do you need to begin Schematic Design?",
         options: ["Geotechnical engineer report", "Tests, inspections, and reports required by law", "Site survey", "Information in regards to lien rights"],
         correct: 2,
-        rationale: "A verified site boundary and topographic survey is necessary to orient and configure the building footprint during SD."
+        rationale: "A verified site boundary and topographic survey is necessary to orient and configure the building footprint during SD[cite: 2]."
       },
       {
-        id: "e1-q47", source: "exam1", number: 47,
+        id: "e1-q47", source: "exam1", area: "area2", number: 47,
         text: "What does your local planning department do after a date has been set for your presentation to the Planning Commission?",
         options: [
           "Issue a Notice of Preparation",
@@ -853,17 +1084,17 @@
           "Submit your project to the state OPR"
         ],
         correct: 1,
-        rationale: "Public hearing notices are mailed to surrounding property owners and occupants (typically within a 300 to 500-foot radius)."
+        rationale: "Public hearing notices are mailed to surrounding property owners and occupants (typically within a 300 to 500-foot radius)[cite: 2]."
       },
       {
-        id: "e1-q48", source: "exam1", number: 48,
+        id: "e1-q48", source: "exam1", area: "area2", number: 48,
         text: "Typically when is a project submitted to the planning department for design and environmental review?",
         options: ["Schematic Design Phase", "Design Development Phase", "Construction Document Phase", "Bid and Negotiation Phase"],
         correct: 0,
-        rationale: "Planning entitlements and environmental reviews are best submitted during Schematic Design before spending substantial fees detailing in DD or CD."
+        rationale: "Planning entitlements and environmental reviews are best submitted during Schematic Design before spending substantial fees detailing in DD or CD[cite: 2]."
       },
       {
-        id: "e1-q49", source: "exam1", number: 49,
+        id: "e1-q49", source: "exam1", area: "area3", number: 49,
         text: "Which of the following milestones are recommended times to exchange progress sets with consultants for interdisciplinary coordination?",
         options: [
           "90% SD, 50% DD, 90% DD, 50% CD and 90% CD",
@@ -872,17 +1103,17 @@
           "90% DD, 50% CD and 90% CD"
         ],
         correct: 2,
-        rationale: "50% DD, 90% DD, 50% CD, and 90% CD provide balanced coordination gates across design development and construction documents."
+        rationale: "50% DD, 90% DD, 50% CD, and 90% CD provide balanced coordination gates across design development and construction documents[cite: 2]."
       },
       {
-        id: "e1-q50", source: "exam1", number: 50,
+        id: "e1-q50", source: "exam1", area: "area1", number: 50,
         text: "Which of the following are methods that architectural firms typically use in their quality control process?\nA. The use of Project Checklists\nB. The use of updated Standard Details\nC. The use of Masterspec",
         options: ["A", "B", "A and B", "All of the above"],
         correct: 2,
-        rationale: "Checklists and office standard details are internal QC systems. Masterspec is simply a third-party starting master; it does not in itself constitute firm QA/QC."
+        rationale: "Checklists and office standard details are internal QC systems[cite: 2]. Masterspec is simply a third-party starting master; it does not in itself constitute firm QA/QC[cite: 2]."
       },
       {
-        id: "e1-q51", source: "exam1", number: 51,
+        id: "e1-q51", source: "exam1", area: "area1", number: 51,
         text: "Which of the following is the best thing that an Architect can do to address the issue of Standard of Care with the client?",
         options: [
           "Explain that the architect cannot be expected to do a perfect job",
@@ -891,24 +1122,24 @@
           "Obtain Professional Liability Insurance"
         ],
         correct: 2,
-        rationale: "Educating the client to maintain realistic design/construction contingencies aligns expectations with the legal reality that perfection is not required."
+        rationale: "Educating the client to maintain realistic design/construction contingencies aligns expectations with the legal reality that perfection is not required[cite: 2]."
       },
       {
-        id: "e1-q52", source: "exam1", number: 52,
+        id: "e1-q52", source: "exam1", area: "area3", number: 52,
         text: "Your client wants significant amounts of glazing for a panoramic view house. What structural framing system is most appropriate?",
         options: ["Steel Frame", "Timber Frame (Heavy Timber)", "Platform Frame", "Balloon Frame"],
         correct: 1,
-        rationale: "Heavy timber/post-and-beam allows wide spans and large unobstructed glazed openings without the prohibitive cost of structural steel."
+        rationale: "Heavy timber/post-and-beam allows wide spans and large unobstructed glazed openings without the prohibitive cost of structural steel[cite: 2]."
       },
       {
-        id: "e1-q53", source: "exam1", number: 53,
+        id: "e1-q53", source: "exam1", area: "area4", number: 53,
         text: "According to CALGreen (Title 24 Part 11), what document is required to be submitted for permit?",
         options: ["Construction Debris Recycle Program", "Energy Management Plan", "Water Consumption Program", "Construction Waste Management Plan"],
         correct: 3,
-        rationale: "CALGreen requires a Construction Waste Management Plan documenting diversion of at least 65% of nonhazardous C&D waste."
+        rationale: "CALGreen requires a Construction Waste Management Plan documenting diversion of at least 65% of nonhazardous C&D waste[cite: 2]."
       },
       {
-        id: "e1-q54", source: "exam1", number: 54,
+        id: "e1-q54", source: "exam1", area: "area4", number: 54,
         text: "According to CBC Chapter 17, what is required to be submitted to the building official for permit application?",
         options: [
           "Reports of Structural Integrity",
@@ -917,45 +1148,45 @@
           "Soils reports only"
         ],
         correct: 1,
-        rationale: "Chapter 17 requires the design professional in responsible charge to prepare and submit a Statement of Special Inspections."
+        rationale: "Chapter 17 requires the design professional in responsible charge to prepare and submit a Statement of Special Inspections[cite: 2]."
       },
       {
-        id: "e1-q55", source: "exam1", number: 55,
+        id: "e1-q55", source: "exam1", area: "area3", number: 55,
         text: "A 'trapeze' hanger system is typically used to support and seismic-brace which of the following?",
         options: ["Piping and conduits", "Suspended lighting fixtures", "Tall bookcases", "Photovoltaics on rooftops"],
         correct: 0,
-        rationale: "Trapeze hangers (unistrut with threaded rods) support horizontal conduits, ducts, and pipe runs."
+        rationale: "Trapeze hangers (unistrut with threaded rods) support horizontal conduits, ducts, and pipe runs[cite: 2]."
       },
       {
-        id: "e1-q56", source: "exam1", number: 56,
+        id: "e1-q56", source: "exam1", area: "area3", number: 56,
         text: "Which lateral force-resisting system resists shear forces primarily through axial tension and compression?",
         options: ["Braced Frame", "Moment Frame", "Space Frame", "Waffle Slab"],
         correct: 0,
-        rationale: "Braced frames resist lateral loads through axial tension and compression in diagonal members."
+        rationale: "Braced frames resist lateral loads through axial tension and compression in diagonal members[cite: 2]."
       },
       {
-        id: "e1-q57", source: "exam1", number: 57,
+        id: "e1-q57", source: "exam1", area: "area3", number: 57,
         text: "Which of the following are recognized categories of automated building energy management controls?\nA. Energy Optimization Systems\nB. Time-of-day Scheduling Systems\nC. Temperature/Time Optimization Systems\nD. Demand Control Systems",
         options: ["A, B and C", "A, B and D", "A, C and D", "B, C and D"],
         correct: 3,
-        rationale: "Time scheduling, setback optimization, and demand control ventilation/load shedding are standard energy management techniques."
+        rationale: "Time scheduling, setback optimization, and demand control ventilation/load shedding are standard energy management techniques[cite: 2]."
       },
       {
-        id: "e1-q58", source: "exam1", number: 58,
+        id: "e1-q58", source: "exam1", area: "area3", number: 58,
         text: "According to passive thermal zoning principles, internal heat-generating 'hot zones' (such as commercial kitchens) should ideally be located along which exposure?",
         options: ["North", "East", "South", "West"],
         correct: 0,
-        rationale: "Placing internal heat-generating spaces on the north (cool) side reduces overall cooling loads by avoiding additional solar heat gain."
+        rationale: "Placing internal heat-generating spaces on the north (cool) side reduces overall cooling loads by avoiding additional solar heat gain[cite: 2]."
       },
       {
-        id: "e1-q59", source: "exam1", number: 59,
+        id: "e1-q59", source: "exam1", area: "area4", number: 59,
         text: "Under CSI MasterFormat, in which division are clock and program systems specified?",
         options: ["10 00 00 - Specialties", "11 00 00 - Equipment", "12 00 00 - Furnishings", "13 00 00 - Special Construction"],
         correct: 0,
-        rationale: "Clock systems and signages fall under Division 10 (Specialties)."
+        rationale: "Clock systems and signages fall under Division 10 (Specialties)[cite: 2]."
       },
       {
-        id: "e1-q60", source: "exam1", number: 60,
+        id: "e1-q60", source: "exam1", area: "area5", number: 60,
         text: "Cost estimates show a project on budget, but the Owner has strict funding and insists on a guarantee that contractor bids will not exceed budget. What should you do?",
         options: [
           "Agree to guarantee only for an additional fee",
@@ -964,38 +1195,38 @@
           "Lower unit cost estimates"
         ],
         correct: 2,
-        rationale: "Architects cannot guarantee bids because they do not control contractor market pricing. Incorporating bid alternates gives the owner budget flexibility."
+        rationale: "Architects cannot guarantee bids because they do not control contractor market pricing[cite: 2]. Incorporating bid alternates gives the owner budget flexibility[cite: 2]."
       },
       {
-        id: "e1-q61", source: "exam1", number: 61,
+        id: "e1-q61", source: "exam1", area: "area5", number: 61,
         text: "Public works projects in California are required to be advertised for bids in newspapers/trade publications in which manner?",
         options: ["Twice a week for at least 1 week", "Once a week for at least 2 weeks", "Twice a week for at least 2 weeks", "Once a week for at least 3 weeks"],
         correct: 1,
-        rationale: "California Public Contract Code requires notice inviting bids published once a week for at least two consecutive weeks."
+        rationale: "California Public Contract Code requires notice inviting bids published once a week for at least two consecutive weeks[cite: 2]."
       },
       {
-        id: "e1-q62", source: "exam1", number: 62,
+        id: "e1-q62", source: "exam1", area: "area5", number: 62,
         text: "Which of the following must the Owner furnish to the Contractor under AIA A201?\nA. Financial information regarding lien rights\nB. Legal description and site survey\nC. Special inspection and testing services",
         options: ["A and B", "B and C", "A, B and C", "A, B and D"],
         correct: 2,
-        rationale: "Under A201 and California codes, the Owner provides site surveys, financial evidence, and directly contracts independent testing/special inspection agencies."
+        rationale: "Under A201 and California codes, the Owner provides site surveys, financial evidence, and directly contracts independent testing/special inspection agencies[cite: 2]."
       },
       {
-        id: "e1-q63", source: "exam1", number: 63,
+        id: "e1-q63", source: "exam1", area: "area5", number: 63,
         text: "Which of the following architectural actions constitutes an official interpretation of the Contract Documents?",
         options: ["Responding to Requests for Information (RFIs)", "Issuing Architect's Supplemental Instructions (ASIs)", "Issuing Work Change Proposal Requests", "All of the above"],
         correct: 0,
-        rationale: "Responding to an RFI interprets the existing drawings/specifications. ASIs order minor changes, and proposal requests initiate potential changes."
+        rationale: "Responding to an RFI interprets the existing drawings/specifications[cite: 2]. ASIs order minor changes, and proposal requests initiate potential changes[cite: 2]."
       },
       {
-        id: "e1-q64", source: "exam1", number: 64,
+        id: "e1-q64", source: "exam1", area: "area1", number: 64,
         text: "Which of the following is true regarding mediation versus arbitration?",
         options: ["Mediation is non-binding", "Arbitration is non-binding", "Both are non-binding", "Both are binding"],
         correct: 0,
-        rationale: "Mediation is a non-binding facilitated negotiation. Arbitration results in a final, legally binding award."
+        rationale: "Mediation is a non-binding facilitated negotiation[cite: 2]. Arbitration results in a final, legally binding award[cite: 2]."
       },
       {
-        id: "e1-q65", source: "exam1", number: 65,
+        id: "e1-q65", source: "exam1", area: "area5", number: 65,
         text: "Under what circumstance will an Architect issue an Architect's Supplemental Instruction (ASI)?",
         options: [
           "To order a minor change in the work not involving adjustment in Contract Sum or Contract Time",
@@ -1004,10 +1235,10 @@
           "To supersede local code approvals"
         ],
         correct: 0,
-        rationale: "AIA Document G710 (ASI) is used to direct minor changes in the work that do not alter contract sum or time."
+        rationale: "AIA Document G710 (ASI) is used to direct minor changes in the work that do not alter contract sum or time[cite: 2]."
       },
       {
-        id: "e1-q66", source: "exam1", number: 66,
+        id: "e1-q66", source: "exam1", area: "area5", number: 66,
         text: "If the Architect discovers evidence that the work cannot be completed for the unpaid contract balance, per AIA A201 the Architect has the right to do what?",
         options: [
           "Recommend that Owner terminate Contract immediately",
@@ -1016,10 +1247,10 @@
           "File an immediate mechanic's lien on behalf of the owner"
         ],
         correct: 2,
-        rationale: "A201 § 9.5 allows the architect to withhold or nullify a Certificate for Payment to protect the owner from loss."
+        rationale: "A201 § 9.5 allows the architect to withhold or nullify a Certificate for Payment to protect the owner from loss[cite: 2]."
       },
       {
-        id: "e1-q67", source: "exam1", number: 67,
+        id: "e1-q67", source: "exam1", area: "area5", number: 67,
         text: "What is the Contractor's responsibility regarding special inspections during construction?",
         options: [
           "Submit statement of special inspection to the building official",
@@ -1028,17 +1259,17 @@
           "Provide access and keep records of all special inspections on the job site"
         ],
         correct: 3,
-        rationale: "The owner contracts the special inspector, while the contractor coordinates access and keeps copies of records on site."
+        rationale: "The owner contracts the special inspector, while the contractor coordinates access and keeps copies of records on site[cite: 2]."
       },
       {
-        id: "e1-q68", source: "exam1", number: 68,
+        id: "e1-q68", source: "exam1", area: "area4", number: 68,
         text: "When conducting an inspection for a Certificate of Occupancy, which of the following is NOT an inspection item for the Fire Marshal?",
         options: ["Fire rated doors and hardware", "Posted occupancy load signage", "Lighting occupancy sensors", "Fire alarms and strobes"],
         correct: 2,
-        rationale: "Lighting occupancy sensors are an Energy Code (Title 24 Part 6) / electrical inspection item, not life-safety within the Fire Marshal's scope."
+        rationale: "Lighting occupancy sensors are an Energy Code (Title 24 Part 6) / electrical inspection item, not life-safety within the Fire Marshal's scope[cite: 2]."
       },
       {
-        id: "e1-q69", source: "exam1", number: 69,
+        id: "e1-q69", source: "exam1", area: "area5", number: 69,
         text: "Which of the following does NOT happen at Substantial Completion?",
         options: [
           "Owner assumes responsibility for security, utilities, and insurance",
@@ -1047,19 +1278,21 @@
           "Warranties and punch lists commence"
         ],
         correct: 1,
-        rationale: "Consent of Surety (AIA G707) is submitted at Final Payment / Final Completion, not at Substantial Completion."
+        rationale: "Consent of Surety (AIA G707) is submitted at Final Payment / Final Completion, not at Substantial Completion[cite: 2]."
       },
       {
-        id: "e1-q70", source: "exam1", number: 70,
+        id: "e1-q70", source: "exam1", area: "area5", number: 70,
         text: "What is the California Statute of Limitations for bringing legal action against design professionals for patent (visible/apparent) construction defects?",
         options: ["4 years", "8 years", "10 years", "No statute of limitations"],
         correct: 0,
-        rationale: "California Code of Civil Procedure § 337.1 establishes a 4-year statute of limitations for patent defects (latent defects have a 10-year limit under § 337.15)."
+        rationale: "California Code of Civil Procedure § 337.1 establishes a 4-year statute of limitations for patent defects (latent defects have a 10-year limit under § 337.15)[cite: 2]."
       },
 
-      // === EXAM 2 (1 to 70) ===
+      // ==========================================
+      // === EXAM 2 (exam2) =======================
+      // ==========================================
       {
-        id: "e2-q1", source: "exam2", number: 1,
+        id: "e2-q1", source: "exam2", area: "area3", number: 1,
         text: "The term 'Zone of Intermittent Saturation' refers to which of the following?",
         options: [
           "The watershed of a seasonal stream or creek",
@@ -1068,10 +1301,10 @@
           "The subsurface area from grade level to the water table"
         ],
         correct: 2,
-        rationale: "The zone of intermittent saturation is the subsurface soil layer between the lowest seasonal water table (dry/summer) and highest water table (wet/winter)."
+        rationale: "The zone of intermittent saturation is the subsurface soil layer between the lowest seasonal water table (dry/summer) and highest water table (wet/winter)[cite: 1]."
       },
       {
-        id: "e2-q2", source: "exam2", number: 2,
+        id: "e2-q2", source: "exam2", area: "area3", number: 2,
         text: "What is soil liquefaction?",
         options: [
           "The mixing of saturated cohesionless sand or soil that loses shear strength during earthquake ground shaking",
@@ -1080,17 +1313,17 @@
           "The contamination of underground aquifers by hazardous materials"
         ],
         correct: 0,
-        rationale: "Liquefaction occurs when loose, saturated granular soils lose strength and stiffness due to increased pore water pressure during seismic shaking."
+        rationale: "Liquefaction occurs when loose, saturated granular soils lose strength and stiffness due to increased pore water pressure during seismic shaking[cite: 1]."
       },
       {
-        id: "e2-q3", source: "exam2", number: 3,
+        id: "e2-q3", source: "exam2", area: "area3", number: 3,
         text: "Which of the following is a naturally occurring radioactive indoor air pollutant?",
         options: ["Lead", "Formaldehyde", "Radon", "Asbestos"],
         correct: 2,
-        rationale: "Radon is an odorless, naturally occurring radioactive gas produced by the radioactive decay of uranium in soil and rock."
+        rationale: "Radon is an odorless, naturally occurring radioactive gas produced by the radioactive decay of uranium in soil and rock[cite: 1]."
       },
       {
-        id: "e2-q4", source: "exam2", number: 4,
+        id: "e2-q4", source: "exam2", area: "area1", number: 4,
         text: "Which of the following is an effective method to ensure ongoing user involvement in an architectural project?",
         options: [
           "Form a steering committee with representatives from key user groups",
@@ -1099,38 +1332,38 @@
           "Organize social gatherings and invite users"
         ],
         correct: 0,
-        rationale: "Forming a steering committee with representatives from key user groups provides active, continuous participation in decision-making."
+        rationale: "Forming a steering committee with representatives from key user groups provides active, continuous participation in decision-making[cite: 1]."
       },
       {
-        id: "e2-q5", source: "exam2", number: 5,
+        id: "e2-q5", source: "exam2", area: "area1", number: 5,
         text: "Which of the following are recognized methods an architect can use to uncover stakeholder expectations?\nA. Charrettes\nB. Focus Groups\nC. Opinion surveys\nD. Direct Observations",
         options: ["A, B and C", "A, C and D", "B, C and D", "All of the above"],
         correct: 3,
-        rationale: "Different stakeholder groups respond to different discovery methods; charrettes, focus groups, surveys, and site observations are all effective."
+        rationale: "Different stakeholder groups respond to different discovery methods; charrettes, focus groups, surveys, and site observations are all effective[cite: 1]."
       },
       {
-        id: "e2-q6", source: "exam2", number: 6,
+        id: "e2-q6", source: "exam2", area: "area3", number: 6,
         text: "Which of the following is NOT a recognized LEED professional credential awarded by GBCI?",
         options: ["LEED Green Associate", "LEED Authorized Professional", "LEED Commissioning Engineer", "LEED Fellow"],
         correct: 2,
-        rationale: "LEED Commissioning Engineer is not a GBCI credential. Recognized credentials are LEED GA, LEED AP (with specialty), and LEED Fellow."
+        rationale: "LEED Commissioning Engineer is not a GBCI credential[cite: 1]. Recognized credentials are LEED GA, LEED AP (with specialty), and LEED Fellow[cite: 1]."
       },
       {
-        id: "e2-q7", source: "exam2", number: 7,
+        id: "e2-q7", source: "exam2", area: "area1", number: 7,
         text: "In addition to adjacency, what other spatial relationships can typically be shown in Bubble Diagrams?\nA. Circulation connections between spaces\nB. Spaces that require acoustic privacy\nC. Spaces that require future flexibility\nD. Spaces that require physical separation with intervening buffers",
         options: ["A, B and C", "A, B and D", "B, C and D", "All of the above"],
         correct: 1,
-        rationale: "Circulation paths, acoustic separation, and physical barriers can be drawn graphically. Flexibility is programmatic and difficult to represent in a bubble diagram."
+        rationale: "Circulation paths, acoustic separation, and physical barriers can be drawn graphically[cite: 1]. Flexibility is programmatic and difficult to represent in a bubble diagram[cite: 1]."
       },
       {
-        id: "e2-q8", source: "exam2", number: 8,
+        id: "e2-q8", source: "exam2", area: "area1", number: 8,
         text: "When putting together a feasibility study for a retail shopping mall, which of the following is the most critical factor that determines economic viability?",
         options: ["Zoning regulations", "Construction cost", "Infrastructure", "Demographics"],
         correct: 3,
-        rationale: "For commercial retail projects, surrounding demographics and buying power dictate whether sufficient customer volume exists to support the center."
+        rationale: "For commercial retail projects, surrounding demographics and buying power dictate whether sufficient customer volume exists to support the center[cite: 1]."
       },
       {
-        id: "e2-q9", source: "exam2", number: 9,
+        id: "e2-q9", source: "exam2", area: "area2", number: 9,
         text: "Identify the correct sequential workflow of CEQA environmental documentation:",
         options: [
           "Initial Study -> Notice of Determination -> Notice of Exemption -> Negative Declaration",
@@ -1139,24 +1372,24 @@
           "Initial Study -> Notice of Exemption -> Notice of Determination -> Negative Declaration"
         ],
         correct: 1,
-        rationale: "The lead agency first determines if an exemption applies (NOE). If not exempt, it conducts an Initial Study; if no significant impacts, it drafts a Neg Dec, and finally files a Notice of Determination (NOD)."
+        rationale: "The lead agency first determines if an exemption applies (NOE)[cite: 1]. If not exempt, it conducts an Initial Study; if no significant impacts, it drafts a Neg Dec, and finally files a Notice of Determination (NOD)[cite: 1]."
       },
       {
-        id: "e2-q10", source: "exam2", number: 10,
+        id: "e2-q10", source: "exam2", area: "area3", number: 10,
         text: "Which of the following is classified as an Essential Services Building under California law?",
         options: ["A California Highway Patrol Station", "A general acute hospital", "A public high school", "A regional office of FEMA"],
         correct: 0,
-        rationale: "Under the Essential Services Buildings Seismic Safety Act, CHP stations, fire stations, police stations, and emergency operations centers are included. (Hospitals are governed by OSHPD/HCAI; FEMA is federal)."
+        rationale: "Under the Essential Services Buildings Seismic Safety Act, CHP stations, fire stations, police stations, and emergency operations centers are included[cite: 1]. (Hospitals are governed by OSHPD/HCAI; FEMA is federal)[cite: 1]."
       },
       {
-        id: "e2-q11", source: "exam2", number: 11,
+        id: "e2-q11", source: "exam2", area: "area4", number: 11,
         text: "According to the California Building Code, what is the minimum floor area requirement for an Efficiency Dwelling Unit?",
         options: ["220 sq. ft.", "240 sq. ft.", "300 sq. ft.", "320 sq. ft."],
         correct: 0,
-        rationale: "CBC Section 1208 requires efficiency dwelling units to have a living room of not less than 220 sq. ft. (or 150 sq. ft. in specific jurisdictions adopting local micro-unit amendments)."
+        rationale: "CBC Section 1208 requires efficiency dwelling units to have a living room of not less than 220 sq. ft.[cite: 1] (or 150 sq. ft. in specific jurisdictions adopting local micro-unit amendments)."
       },
       {
-        id: "e2-q12", source: "exam2", number: 12,
+        id: "e2-q12", source: "exam2", area: "area4", number: 12,
         text: "According to the California Building Code, what is the minimum size requirement for a Fire Service Access Elevator (FSAE) lobby?",
         options: [
           "120 sq. ft. in size and 8 ft. minimum each side",
@@ -1165,10 +1398,10 @@
           "150 sq. ft. in size and 10 ft. minimum dimension"
         ],
         correct: 2,
-        rationale: "CBC Section 3007 specifies the FSAE lobby must be not less than 150 sq. ft. with a minimum dimension of 8 feet."
+        rationale: "CBC Section 3007 specifies the FSAE lobby must be not less than 150 sq. ft. with a minimum dimension of 8 feet[cite: 1]."
       },
       {
-        id: "e2-q13", source: "exam2", number: 13,
+        id: "e2-q13", source: "exam2", area: "area3", number: 13,
         text: "As per the structural requirements of the California Building Code, Risk Category (Occupancy Category) IV includes which structures?",
         options: [
           "Buildings and structures designated as essential facilities",
@@ -1177,10 +1410,10 @@
           "Buildings that represent a low hazard to human life"
         ],
         correct: 0,
-        rationale: "Category IV structures are designated essential facilities (police, fire, emergency communications, designated disaster shelters)."
+        rationale: "Category IV structures are designated essential facilities (police, fire, emergency communications, designated disaster shelters)[cite: 1]."
       },
       {
-        id: "e2-q14", source: "exam2", number: 14,
+        id: "e2-q14", source: "exam2", area: "area4", number: 14,
         text: "According to CBC Chapter 11B, in a multi-compartment restroom, an additional 36-inch wide ambulatory accessible stall is required under which condition?",
         options: [
           "For every 8 water closets",
@@ -1189,10 +1422,10 @@
           "Where 6 or more water closets and urinals are provided in the room"
         ],
         correct: 3,
-        rationale: "CBC 11B-213.3.1 requires an ambulatory accessible compartment when six or more water closets and urinals combined are installed."
+        rationale: "CBC 11B-213.3.1 requires an ambulatory accessible compartment when six or more water closets and urinals combined are installed[cite: 1]."
       },
       {
-        id: "e2-q15", source: "exam2", number: 15,
+        id: "e2-q15", source: "exam2", area: "area4", number: 15,
         text: "What is the ratio requirement for van-accessible parking spaces under CBC Chapter 11B?",
         options: [
           "At least one for every 5 or fraction of 5 accessible spaces",
@@ -1201,38 +1434,38 @@
           "At least one for every 8 or fraction of 8 accessible spaces"
         ],
         correct: 1,
-        rationale: "CBC 11B-208.2.4 mandates that for every six or fraction of six accessible spaces, at least one must be a van-accessible space (132\" wide stall or 108\" stall with 96\" aisle)."
+        rationale: "CBC 11B-208.2.4 mandates that for every six or fraction of six accessible spaces, at least one must be a van-accessible space[cite: 1] (132\" wide stall or 108\" stall with 96\" aisle)."
       },
       {
-        id: "e2-q16", source: "exam2", number: 16,
+        id: "e2-q16", source: "exam2", area: "area3", number: 16,
         text: "For temporary or movable equipment stationed in one place for no more than 8 hours, current code allows enforcing agencies to require seismic restraints when the equipment exceeds what weight?",
         options: ["100 lbs", "200 lbs", "300 lbs", "400 lbs"],
         correct: 3,
-        rationale: "Equipment weighing more than 400 lbs must be anchored to prevent overturning and slide hazards."
+        rationale: "Equipment weighing more than 400 lbs must be anchored to prevent overturning and slide hazards[cite: 1]."
       },
       {
-        id: "e2-q17", source: "exam2", number: 17,
+        id: "e2-q17", source: "exam2", area: "area4", number: 17,
         text: "The California Electrical Code allows which professional other than registered electrical engineers to serve as Design Reviewers for electrical systems?",
         options: ["Architect", "Owner Employed Special Inspector", "Building Department Plan Checker", "Only electrical engineers"],
         correct: 0,
-        rationale: "Licensed architects are recognized as registered design professionals capable of overall system design review."
+        rationale: "Licensed architects are recognized as registered design professionals capable of overall system design review[cite: 1]."
       },
       {
-        id: "e2-q18", source: "exam2", number: 18,
+        id: "e2-q18", source: "exam2", area: "area4", number: 18,
         text: "According to the California Health and Safety Code, which of the following safety features is required for all commercial and public swimming pools?",
         options: ["Underwater wet-niche light fixtures", "Variable speed circulation pumps", "Anti-vortex drains", "Anti-entrapment drain covers/devices"],
         correct: 3,
-        rationale: "Anti-entrapment covers complying with ASME/ANSI A112.19.8 (or suction limitation systems) are mandated under the Swimming Pool Safety Act."
+        rationale: "Anti-entrapment covers complying with ASME/ANSI A112.19.8 (or suction limitation systems) are mandated under the Swimming Pool Safety Act[cite: 1]."
       },
       {
-        id: "e2-q19", source: "exam2", number: 19,
+        id: "e2-q19", source: "exam2", area: "area5", number: 19,
         text: "California Design Professional Lien law requires that prior to recording a lien, design professionals must provide the owner with written demand at least how many days in advance?",
         options: ["10 days", "15 days", "30 days", "60 days"],
         correct: 0,
-        rationale: "California Civil Code § 8416 requires design professionals to give the property owner at least 10 days written notice before recording a lien."
+        rationale: "California Civil Code § 8416 requires design professionals to give the property owner at least 10 days written notice before recording a lien[cite: 1]."
       },
       {
-        id: "e2-q20", source: "exam2", number: 20,
+        id: "e2-q20", source: "exam2", area: "area5", number: 20,
         text: "In order to preserve the right to file a mechanic's lien, when must a sub-contractor serve the Preliminary 20-Day Notice?",
         options: [
           "Within 20 days after starting construction on the job site",
@@ -1241,17 +1474,17 @@
           "Within 20 days of the first progress payment application"
         ],
         correct: 1,
-        rationale: "Civil Code § 8204 states the preliminary notice must be served not later than 20 days after the claimant first furnishes work, services, or equipment."
+        rationale: "Civil Code § 8204 states the preliminary notice must be served not later than 20 days after the claimant first furnishes work, services, or equipment[cite: 1]."
       },
       {
-        id: "e2-q21", source: "exam2", number: 21,
+        id: "e2-q21", source: "exam2", area: "area2", number: 21,
         text: "According to the California Clean Air Act, stationary equipment or industrial processes that emit pollutants are required to obtain what from the local AQMD?",
         options: ["Letter of Permission", "Permit to Operate (PTO)", "General Permit", "Standard Permit"],
         correct: 1,
-        rationale: "Local Air Quality Management Districts issue an Authority to Construct followed by a Permit to Operate (PTO)."
+        rationale: "Local Air Quality Management Districts issue an Authority to Construct followed by a Permit to Operate (PTO)[cite: 1]."
       },
       {
-        id: "e2-q22", source: "exam2", number: 22,
+        id: "e2-q22", source: "exam2", area: "area2", number: 22,
         text: "According to the California Coastal Act, what is the general geographic boundary of the Coastal Zone?",
         options: [
           "Between the sea and the first public road",
@@ -1260,17 +1493,17 @@
           "Extends seaward to state jurisdictional limits (3 nmi) and generally 1,000 yards inland (up to 5 miles in rural habitat/mountain zones)"
         ],
         correct: 3,
-        rationale: "The Coastal Zone extends 3 miles offshore to the state boundary and inland generally 1,000 yards, expanding up to 5 miles in undeveloped coastal ridgelines."
+        rationale: "The Coastal Zone extends 3 miles offshore to the state boundary and inland generally 1,000 yards, expanding up to 5 miles in undeveloped coastal ridgelines[cite: 1]."
       },
       {
-        id: "e2-q23", source: "exam2", number: 23,
+        id: "e2-q23", source: "exam2", area: "area1", number: 23,
         text: "Which of the following are required of architects when exercising Responsible Control under California law?\nA. Be licensed in California\nB. Stamp and sign drawings\nC. Exercise standard of care over document preparation\nD. Execute a written contract\nE. Carry errors and omissions insurance",
         options: ["A and B", "A, B and C", "A, B, C and D", "All of the above"],
         correct: 1,
-        rationale: "B&P Code § 5535.1 defines responsible control by licensure, stamp/seal, and direct control and review. Contracts and insurance are business requirements, not components of responsible control."
+        rationale: "B&P Code § 5535.1 defines responsible control by licensure, stamp/seal, and direct control and review[cite: 1]. Contracts and insurance are business requirements, not components of responsible control[cite: 1]."
       },
       {
-        id: "e2-q24", source: "exam2", number: 24,
+        id: "e2-q24", source: "exam2", area: "area1", number: 24,
         text: "Under the Architects Practice Act, in which of the following scenarios is the Architect REQUIRED to have a written contract?",
         options: [
           "Performing pro bono work with zero compensation",
@@ -1279,10 +1512,10 @@
           "The client states in writing that they do not want a contract"
         ],
         correct: 2,
-        rationale: "B&P Code § 5536.22 exempts work for professional engineers, but a traffic engineer or unlicensed consultant is not a registered civil/structural/mechanical/electrical engineer."
+        rationale: "B&P Code § 5536.22 exempts work for professional engineers, but a traffic engineer or unlicensed consultant is not a registered civil/structural/mechanical/electrical engineer[cite: 1]."
       },
       {
-        id: "e2-q25", source: "exam2", number: 25,
+        id: "e2-q25", source: "exam2", area: "area1", number: 25,
         text: "The California Architects Practice Act states that misdemeanor practice of architecture without a license is punishable by what?",
         options: [
           "Fine of $100 to $2,000 or up to 1 year imprisonment",
@@ -1291,10 +1524,10 @@
           "Fine of $200 to $5,000 or up to 2 years imprisonment"
         ],
         correct: 1,
-        rationale: "B&P Code § 5536 makes unlicensed practice a misdemeanor punishable by a fine not less than $100 and not more than $5,000, or by imprisonment up to 1 year, or both."
+        rationale: "B&P Code § 5536 makes unlicensed practice a misdemeanor punishable by a fine not less than $100 and not more than $5,000, or by imprisonment up to 1 year, or both[cite: 1]."
       },
       {
-        id: "e2-q26", source: "exam2", number: 26,
+        id: "e2-q26", source: "exam2", area: "area1", number: 26,
         text: "Which project is exempt from the licensing provisions of the California Architects Practice Act?",
         options: [
           "Single-family dwelling of reinforced masonry construction, 2 stories high",
@@ -1303,31 +1536,31 @@
           "Garages and similar wood-frame outbuildings not over 2 stories and basement"
         ],
         correct: 3,
-        rationale: "Wood frame conventional construction garages, outbuildings, and single-family dwellings are exempt under B&P Code § 5537 (masonry construction requires an architect or engineer)."
+        rationale: "Wood frame conventional construction garages, outbuildings, and single-family dwellings are exempt under B&P Code § 5537[cite: 1] (masonry construction requires an architect or engineer)."
       },
       {
-        id: "e2-q27", source: "exam2", number: 27,
+        id: "e2-q27", source: "exam2", area: "area1", number: 27,
         text: "To form a Registered Limited Liability Partnership (LLP) in California, the entity must file registration with which agency?",
         options: ["California Secretary of State", "Department of Consumer Affairs", "Business and Transportation Agency", "Department of Corporations"],
         correct: 0,
-        rationale: "All corporate, LLC, and LLP entity registrations are filed with the California Secretary of State."
+        rationale: "All corporate, LLC, and LLP entity registrations are filed with the California Secretary of State[cite: 1]."
       },
       {
-        id: "e2-q28", source: "exam2", number: 28,
+        id: "e2-q28", source: "exam2", area: "area1", number: 28,
         text: "California state administrative regulations governing architect firm naming and advertising are found in which title?",
         options: ["Title 2: Administration", "Title 4: Business Regulations", "Title 11: Law", "Title 16: Professional and Vocational Regulations"],
         correct: 3,
-        rationale: "Title 16, Division 2 contains the rules and regulations of the California Architects Board."
+        rationale: "Title 16, Division 2 contains the rules and regulations of the California Architects Board[cite: 1]."
       },
       {
-        id: "e2-q29", source: "exam2", number: 29,
+        id: "e2-q29", source: "exam2", area: "area2", number: 29,
         text: "Which of the following is one of the mandatory elements of a California General Plan?",
         options: ["Sustainability", "Noise", "Recreation", "Public Transit"],
         correct: 1,
-        rationale: "The seven mandatory General Plan elements are Land Use, Circulation, Housing, Conservation, Open Space, Noise, and Safety."
+        rationale: "The seven mandatory General Plan elements are Land Use, Circulation, Housing, Conservation, Open Space, Noise, and Safety[cite: 1]."
       },
       {
-        id: "e2-q30", source: "exam2", number: 30,
+        id: "e2-q30", source: "exam2", area: "area1", number: 30,
         text: "Which of the following is NOT true regarding private Covenants, Conditions and Restrictions (CC&Rs)?",
         options: [
           "They are enforced by homeowners associations or private lawsuits",
@@ -1336,24 +1569,24 @@
           "They are recorded with the county recorder"
         ],
         correct: 2,
-        rationale: "CC&Rs frequently govern non-physical items such as pet restrictions, rental limitations, quiet hours, and business uses."
+        rationale: "CC&Rs frequently govern non-physical items such as pet restrictions, rental limitations, quiet hours, and business uses[cite: 1]."
       },
       {
-        id: "e2-q31", source: "exam2", number: 31,
+        id: "e2-q31", source: "exam2", area: "area2", number: 31,
         text: "Who has legal authority to enforce the federal Americans with Disabilities Act (ADA) in California?",
         options: ["Local Building Departments", "Division of the State Architect (DSA)", "OSHPD / HCAI", "U.S. Department of Justice or private parties via civil lawsuits"],
         correct: 3,
-        rationale: "ADA is a federal civil rights statute enforced by the US Department of Justice and federal courts. Local building departments enforce Title 24, not the ADA."
+        rationale: "ADA is a federal civil rights statute enforced by the US Department of Justice and federal courts[cite: 1]. Local building departments enforce Title 24, not the ADA[cite: 1]."
       },
       {
-        id: "e2-q32", source: "exam2", number: 32,
+        id: "e2-q32", source: "exam2", area: "area4", number: 32,
         text: "Which is an area where California Building Code accessibility standards differ and are more stringent than the 2010 ADA Guidelines?",
         options: ["Detectable warning truncated domes at transit boarding and curb ramps", "Dimensions of elevator cars", "Passenger Loading zones", "There are no differences"],
         correct: 0,
-        rationale: "California mandates yellow detectable warning truncated domes at curb ramps and hazardous vehicular ways, whereas ADA eliminated some of these requirements."
+        rationale: "California mandates yellow detectable warning truncated domes at curb ramps and hazardous vehicular ways, whereas ADA eliminated some of these requirements[cite: 1]."
       },
       {
-        id: "e2-q33", source: "exam2", number: 33,
+        id: "e2-q33", source: "exam2", area: "area2", number: 33,
         text: "Under federal aviation regulations, when must an architect/sponsor notify the FAA (Form 7460-1)?",
         options: [
           "Highways taller than 100 ft",
@@ -1362,38 +1595,38 @@
           "Alterations within set distances from a heliport only"
         ],
         correct: 2,
-        rationale: "FAA notification is required for structures greater than 200 feet above ground level or piercing imaginary approach surfaces."
+        rationale: "FAA notification is required for structures greater than 200 feet above ground level or piercing imaginary approach surfaces[cite: 1]."
       },
       {
-        id: "e2-q34", source: "exam2", number: 34,
+        id: "e2-q34", source: "exam2", area: "area2", number: 34,
         text: "Which of the following is NOT a federal statute granting the U.S. Army Corps of Engineers regulatory jurisdiction over waters and wetlands?",
         options: ["Rivers and Harbors Act § 10", "National Environmental Quality Act", "Clean Water Act § 404", "Marine Protection, Research and Sanctuaries Act"],
         correct: 1,
-        rationale: "There is no 'National Environmental Quality Act' (it is NEPA). The Rivers and Harbors Act and Clean Water Act are the Army Corps' statutes."
+        rationale: "There is no 'National Environmental Quality Act' (it is NEPA)[cite: 1]. The Rivers and Harbors Act and Clean Water Act are the Army Corps' statutes[cite: 1]."
       },
       {
-        id: "e2-q35", source: "exam2", number: 35,
+        id: "e2-q35", source: "exam2", area: "area3", number: 35,
         text: "AF&PA / NDS is the recognized national design standard for which building material?",
         options: ["Wood", "Concrete", "Masonry", "Structural Steel"],
         correct: 0,
-        rationale: "NDS is the National Design Specification for Wood Construction (American Forest & Paper Association / American Wood Council)."
+        rationale: "NDS is the National Design Specification for Wood Construction (American Forest & Paper Association / American Wood Council)[cite: 1]."
       },
       {
-        id: "e2-q36", source: "exam2", number: 36,
+        id: "e2-q36", source: "exam2", area: "area2", number: 36,
         text: "Under the California Unified Program, which local agency typically conducts review and approval of Hazardous Materials Management Plans (HMMP)?",
         options: ["Public Works Department", "Department of Environmental Health", "Building Department", "Local Fire Department"],
         correct: 3,
-        rationale: "Local fire departments act as the CUPA to review HMMPs and chemical inventory hazardous materials disclosure."
+        rationale: "Local fire departments act as the CUPA to review HMMPs and chemical inventory hazardous materials disclosure[cite: 1]."
       },
       {
-        id: "e2-q37", source: "exam2", number: 37,
+        id: "e2-q37", source: "exam2", area: "area2", number: 37,
         text: "Which building elements are typically submitted to local police departments for Crime Prevention Through Environmental Design (CPTED) review?\nA. Security cameras\nB. Alarm systems\nC. Access control gates\nD. Walk-up ATM machines",
         options: ["A, B and C", "A, B and D", "B, C and D", "All of the above"],
         correct: 3,
-        rationale: "Police departments review security site plans including lighting, ATM sightlines, alarms, and electronic access gates."
+        rationale: "Police departments review security site plans including lighting, ATM sightlines, alarms, and electronic access gates[cite: 1]."
       },
       {
-        id: "e2-q38", source: "exam2", number: 38,
+        id: "e2-q38", source: "exam2", area: "area2", number: 38,
         text: "Which of the following is NOT an operational responsibility of county Flood Control Districts?",
         options: [
           "Protection of watercourses and water conveyance",
@@ -1402,10 +1635,10 @@
           "Preservation of floodwater for percolation and beneficial reuse"
         ],
         correct: 2,
-        rationale: "Contamination cleanups are handled by the RWQCB and DTSC, not county flood control agencies."
+        rationale: "Contamination cleanups are handled by the RWQCB and DTSC, not county flood control agencies[cite: 1]."
       },
       {
-        id: "e2-q39", source: "exam2", number: 39,
+        id: "e2-q39", source: "exam2", area: "area2", number: 39,
         text: "Which of the following is NOT a regulatory function of the California Air Resources Board (CARB)?",
         options: [
           "Regulating formaldehyde emissions from plastic pipe products",
@@ -1414,17 +1647,17 @@
           "Developing state clean air implementation plans"
         ],
         correct: 0,
-        rationale: "CARB ATCM limits formaldehyde in composite wood products (MDF, particleboard, hardwood plywood), not plastic plumbing pipes."
+        rationale: "CARB ATCM limits formaldehyde in composite wood products (MDF, particleboard, hardwood plywood), not plastic plumbing pipes[cite: 1]."
       },
       {
-        id: "e2-q40", source: "exam2", number: 40,
+        id: "e2-q40", source: "exam2", area: "area2", number: 40,
         text: "The California Division of the State Architect (DSA) has full plan check and building enforcement authority over which facility types?\nA. K-12 public schools\nB. Community colleges\nC. University of California buildings\nD. California State University buildings",
         options: ["A only", "A and B", "B, C and D", "All of the above"],
         correct: 1,
-        rationale: "DSA regulates K-12 and community colleges under the Field Act. UC and CSU have independent seismic boards and only use DSA for accessibility."
+        rationale: "DSA regulates K-12 and community colleges under the Field Act[cite: 1]. UC and CSU have independent seismic boards and only use DSA for accessibility[cite: 1]."
       },
       {
-        id: "e2-q41", source: "exam2", number: 41,
+        id: "e2-q41", source: "exam2", area: "area2", number: 41,
         text: "A General / Nationwide Permit issued by the U.S. Army Corps of Engineers applies to which type of work?",
         options: [
           "Projects approved on an accelerated emergency basis",
@@ -1433,10 +1666,10 @@
           "Projects with zero environmental touch"
         ],
         correct: 2,
-        rationale: "General/Nationwide permits apply to defined categories of activities that cause only minimal adverse environmental effects."
+        rationale: "General/Nationwide permits apply to defined categories of activities that cause only minimal adverse environmental effects[cite: 1]."
       },
       {
-        id: "e2-q42", source: "exam2", number: 42,
+        id: "e2-q42", source: "exam2", area: "area2", number: 42,
         text: "What is the primary role of the California Governor's Office of Planning and Research (OPR)?",
         options: [
           "Coordinate statewide environmental review and provide CEQA guidelines",
@@ -1445,10 +1678,10 @@
           "Approve architectural licenses"
         ],
         correct: 0,
-        rationale: "OPR develops CEQA implementation guidelines and runs the State Clearinghouse to coordinate state environmental reviews."
+        rationale: "OPR develops CEQA implementation guidelines and runs the State Clearinghouse to coordinate state environmental reviews[cite: 1]."
       },
       {
-        id: "e2-q43", source: "exam2", number: 43,
+        id: "e2-q43", source: "exam2", area: "area2", number: 43,
         text: "Under CEQA, what can a Responsible Agency do if it finds that a Lead Agency prepared an inadequate EIR?",
         options: [
           "Nothing, the Lead Agency's decision is completely unchallengeable",
@@ -1457,17 +1690,17 @@
           "Assume the role of Lead Agency or file a legal challenge within 30 days of the NOD"
         ],
         correct: 3,
-        rationale: "CEQA Guidelines § 15096 allows a responsible agency to take over lead agency duties under certain conditions or file a court petition."
+        rationale: "CEQA Guidelines § 15096 allows a responsible agency to take over lead agency duties under certain conditions or file a court petition[cite: 1]."
       },
       {
-        id: "e2-q44", source: "exam2", number: 44,
+        id: "e2-q44", source: "exam2", area: "area3", number: 44,
         text: "Which of the following is typically included in the civil engineer's scope of design services?",
         options: ["Landscape irrigation design", "Pavement design and site parking grading/drainage", "Water supply pipes inside the building envelope", "Parking lot lighting photometrics"],
         correct: 1,
-        rationale: "Civil engineers handle site grading, paving sections, and site stormwater drainage. Irrigation is landscape; interior piping is plumbing; lighting is electrical."
+        rationale: "Civil engineers handle site grading, paving sections, and site stormwater drainage[cite: 1]. Irrigation is landscape; interior piping is plumbing; lighting is electrical[cite: 1]."
       },
       {
-        id: "e2-q45", source: "exam2", number: 45,
+        id: "e2-q45", source: "exam2", area: "area3", number: 45,
         text: "Which of the following is NOT considered an effective internal QA/QC coordination practice?",
         options: [
           "Exchanging milestone progress sets with consultants",
@@ -1476,17 +1709,17 @@
           "Continuous senior peer review throughout the project life cycle"
         ],
         correct: 2,
-        rationale: "Waiting until the Construction Documents phase to hold the first consultant coordination meeting is far too late and leads to substantial redesign."
+        rationale: "Waiting until the Construction Documents phase to hold the first consultant coordination meeting is far too late and leads to substantial redesign[cite: 1]."
       },
       {
-        id: "e2-q46", source: "exam2", number: 46,
+        id: "e2-q46", source: "exam2", area: "area1", number: 46,
         text: "Which of the following practices actively builds awareness of the standard of care and strengthens an architect's professional capability?\nA. Reviewing prominent design trends\nB. Studying product manufacturer technical literature\nC. Attending accredited continuing education seminars\nD. Participating in peer review programs\nE. Publishing an article about self-projects",
         options: ["A, B and C", "A, C and E", "A, D and E", "B, C and D"],
         correct: 3,
-        rationale: "Manufacturer literature, continuing education courses, and peer reviews sharpen technical competency and align practice with the professional standard of care."
+        rationale: "Manufacturer literature, continuing education courses, and peer reviews sharpen technical competency and align practice with the professional standard of care[cite: 1]."
       },
       {
-        id: "e2-q47", source: "exam2", number: 47,
+        id: "e2-q47", source: "exam2", area: "area1", number: 47,
         text: "During Schematic Design, the Owner directs you to bypass Design Development and proceed directly to CDs to fast-track the opening. How should you respond?",
         options: [
           "Comply immediately and add extra drafting staff",
@@ -1495,10 +1728,10 @@
           "Refuse outright and terminate the contract"
         ],
         correct: 1,
-        rationale: "Bypassing DD leads to massive coordination failures and cost overruns. The architect should counsel the owner and investigate phased permitting or package bidding."
+        rationale: "Bypassing DD leads to massive coordination failures and cost overruns[cite: 1]. The architect should counsel the owner and investigate phased permitting or package bidding[cite: 1]."
       },
       {
-        id: "e2-q48", source: "exam2", number: 48,
+        id: "e2-q48", source: "exam2", area: "area1", number: 48,
         text: "Your cost estimate shows the project is 5% over budget at the conclusion of Schematic Design. What is your contractual responsibility?",
         options: [
           "Advise the client not to worry because SD estimates are approximate",
@@ -1507,31 +1740,31 @@
           "Artificially lower the square foot cost numbers on the estimate"
         ],
         correct: 2,
-        rationale: "Under AIA B101, if the architect's estimate exceeds the budget at the end of SD, the architect must review options with the owner to adjust scope, size, or quality."
+        rationale: "Under AIA B101, if the architect's estimate exceeds the budget at the end of SD, the architect must review options with the owner to adjust scope, size, or quality[cite: 1]."
       },
       {
-        id: "e2-q49", source: "exam2", number: 49,
+        id: "e2-q49", source: "exam2", area: "area2", number: 49,
         text: "Which consultant typically produces drawings that are submitted for Planning Commission design review?",
         options: ["Civil Engineer", "Landscape Architect", "Structural Engineer", "Acoustical Engineer"],
         correct: 1,
-        rationale: "Landscape architects prepare site layouts, hardscape, tree preservation, and planting plans which are central to planning and design review approvals."
+        rationale: "Landscape architects prepare site layouts, hardscape, tree preservation, and planting plans which are central to planning and design review approvals[cite: 1]."
       },
       {
-        id: "e2-q50", source: "exam2", number: 50,
+        id: "e2-q50", source: "exam2", area: "area1", number: 50,
         text: "Under AIA B101, if the Owner suspends the project for more than how many cumulative days may the Architect terminate the agreement?",
         options: ["30 days", "60 days", "90 days", "120 days"],
         correct: 2,
-        rationale: "AIA B101 § 9.3 allows the architect to terminate the contract upon not less than 7 days written notice if the owner suspends the project for more than 90 cumulative days."
+        rationale: "AIA B101 § 9.3 allows the architect to terminate the contract upon not less than 7 days written notice if the owner suspends the project for more than 90 cumulative days[cite: 1]."
       },
       {
-        id: "e2-q51", source: "exam2", number: 51,
+        id: "e2-q51", source: "exam2", area: "area3", number: 51,
         text: "Recessed light fixtures and grilles in suspended acoustical tile ceilings are required by California seismic codes to be supported by independent safety wires of what minimum gauge?",
         options: ["10 gauge", "11 gauge", "12 gauge", "14 gauge"],
         correct: 2,
-        rationale: "CISCA guidelines and ASTM standards require two 12-gauge hanger wires connected to opposite corners of recessed light fixtures."
+        rationale: "CISCA guidelines and ASTM standards require two 12-gauge hanger wires connected to opposite corners of recessed light fixtures[cite: 1]."
       },
       {
-        id: "e2-q52", source: "exam2", number: 52,
+        id: "e2-q52", source: "exam2", area: "area3", number: 52,
         text: "In earthquake engineering for non-structural components, 'inertia failure' refers to damage caused by which phenomenon?",
         options: [
           "Excessive shaking and accelerations acting directly on the mass of the non-structural component",
@@ -1540,10 +1773,10 @@
           "Soil liquefaction below grade"
         ],
         correct: 0,
-        rationale: "Inertia forces are proportional to the mass and seismic acceleration ($F = ma$), causing unrestrained heavy components to topple or break anchors."
+        rationale: "Inertia forces are proportional to the mass and seismic acceleration (F = ma), causing unrestrained heavy components to topple or break anchors[cite: 1]."
       },
       {
-        id: "e2-q53", source: "exam2", number: 53,
+        id: "e2-q53", source: "exam2", area: "area3", number: 53,
         text: "Which of the following is NOT a design prerequisite for a base-isolated seismic structure?",
         options: [
           "Superstructure designed to behave as a rigid box above the isolator plane",
@@ -1552,10 +1785,10 @@
           "Flexible utility connections across the seismic isolation moat"
         ],
         correct: 2,
-        rationale: "Superstructures with cantilevers are allowed provided the structure behaves rigidly as a unified diaphragm system above the isolation plane."
+        rationale: "Superstructures with cantilevers are allowed provided the structure behaves rigidly as a unified diaphragm system above the isolation plane[cite: 1]."
       },
       {
-        id: "e2-q54", source: "exam2", number: 54,
+        id: "e2-q54", source: "exam2", area: "area3", number: 54,
         text: "Under which soil or site condition is a mat (raft) foundation commonly specified?",
         options: [
           "Sites with high water tables or low bearing capacity where spread footings would cover over half the footprint",
@@ -1564,10 +1797,10 @@
           "Dry sandy desert conditions"
         ],
         correct: 0,
-        rationale: "Mat foundations distribute loads over a massive footprint to resist differential settlement in weak soils and resist hydrostatic uplift in high water tables."
+        rationale: "Mat foundations distribute loads over a massive footprint to resist differential settlement in weak soils and resist hydrostatic uplift in high water tables[cite: 1]."
       },
       {
-        id: "e2-q55", source: "exam2", number: 55,
+        id: "e2-q55", source: "exam2", area: "area3", number: 55,
         text: "What is a major operational limitation of air-source heat pumps in cold weather conditions?",
         options: [
           "Inability to provide cooling",
@@ -1576,10 +1809,10 @@
           "Prohibitive duct requirements"
         ],
         correct: 1,
-        rationale: "Air-source heat pumps suffer reduced coefficient of performance (COP) and diminished heating capacity in sub-freezing temperatures, requiring supplemental heat."
+        rationale: "Air-source heat pumps suffer reduced coefficient of performance (COP) and diminished heating capacity in sub-freezing temperatures, requiring supplemental heat[cite: 1]."
       },
       {
-        id: "e2-q56", source: "exam2", number: 56,
+        id: "e2-q56", source: "exam2", area: "area3", number: 56,
         text: "What is a primary distinction in water management between a curtain wall system and a storefront system?",
         options: [
           "Glass color availability",
@@ -1588,38 +1821,38 @@
           "Storefronts cannot receive double glazing"
         ],
         correct: 2,
-        rationale: "Storefronts drain internal condensation to the bottom sub-sill pan; multi-story curtain walls manage water through internal gutters weeping at each floor."
+        rationale: "Storefronts drain internal condensation to the bottom sub-sill pan; multi-story curtain walls manage water through internal gutters weeping at each floor[cite: 1]."
       },
       {
-        id: "e2-q57", source: "exam2", number: 57,
+        id: "e2-q57", source: "exam2", area: "area3", number: 57,
         text: "Other than cost and lead time, what criteria should architects evaluate when specifying materials?\nA. Maintenance & Cleanability\nB. Durability & Lifespan\nC. Owner / User operational needs\nD. Aesthetics\nE. Whether the product is brand new and untested",
         options: ["A, B, C and D", "A, B, C and E", "A, B, D and E", "B, C, D and E"],
         correct: 0,
-        rationale: "Specifying untested products without proven track records violates standard risk management practices. Maintenance, durability, user need, and aesthetics are standard."
+        rationale: "Specifying untested products without proven track records violates standard risk management practices[cite: 1]. Maintenance, durability, user need, and aesthetics are standard[cite: 1]."
       },
       {
-        id: "e2-q58", source: "exam2", number: 58,
+        id: "e2-q58", source: "exam2", area: "area4", number: 58,
         text: "Which of the following items is typically shown on detail sections and wall details rather than on roof plans?",
         options: ["Roof crickets", "Continuous thermal insulation layers", "Roof drain locations", "Rooftop mechanical equipment"],
         correct: 1,
-        rationale: "Insulation thickness, vapor retarders, and attachment details are detailed in wall/roof sections; roof plans show geometry, drains, crickets, and curbs."
+        rationale: "Insulation thickness, vapor retarders, and attachment details are detailed in wall/roof sections; roof plans show geometry, drains, crickets, and curbs[cite: 1]."
       },
       {
-        id: "e2-q59", source: "exam2", number: 59,
+        id: "e2-q59", source: "exam2", area: "area4", number: 59,
         text: "Which dimensional data is typically found directly on drawing schedules rather than in project specifications?",
         options: ["Ceiling tile sizes", "Door and window frame sizes", "Plumbing fixture diameters", "Stud gauge thicknesses"],
         correct: 1,
-        rationale: "Door and window sizes and opening schedules belong on drawings; material technical performance and standards belong in specs."
+        rationale: "Door and window sizes and opening schedules belong on drawings; material technical performance and standards belong in specs[cite: 1]."
       },
       {
-        id: "e2-q60", source: "exam2", number: 60,
+        id: "e2-q60", source: "exam2", area: "area5", number: 60,
         text: "Which of the following documents does NOT exist at the time the original bidding documents are issued?",
         options: ["Form of Agreement", "General and Supplementary Conditions", "Bonding Requirements", "Addenda"],
         correct: 3,
-        rationale: "Addenda are modifications issued during the bidding period prior to bid receipt; they do not exist when the initial bid set is issued."
+        rationale: "Addenda are modifications issued during the bidding period prior to bid receipt; they do not exist when the initial bid set is issued[cite: 1]."
       },
       {
-        id: "e2-q61", source: "exam2", number: 61,
+        id: "e2-q61", source: "exam2", area: "area4", number: 61,
         text: "Plan check returns with major spatial conflicts between mechanical duct runs and structural beams. What is your first action?",
         options: [
           "Notify the owner that the permit is failed",
@@ -1628,10 +1861,10 @@
           "Instruct the consultants to work it out without architect participation"
         ],
         correct: 2,
-        rationale: "The architect in responsible control leads coordination between structural and MEP disciplines to resolve spatial clashes."
+        rationale: "The architect in responsible control leads coordination between structural and MEP disciplines to resolve spatial clashes[cite: 1]."
       },
       {
-        id: "e2-q62", source: "exam2", number: 62,
+        id: "e2-q62", source: "exam2", area: "area5", number: 62,
         text: "If the Owner engages a Construction Manager as Advisor (CMa), which architectural CA service is shared or significantly filtered?",
         options: [
           "Review and certification of contractor payment applications",
@@ -1640,10 +1873,10 @@
           "Conducting aesthetic punch lists"
         ],
         correct: 0,
-        rationale: "Under AIA C132/A232, the Construction Manager reviews and certifies the contractor's payment application before passing it to the architect for joint approval."
+        rationale: "Under AIA C132/A232, the Construction Manager reviews and certifies the contractor's payment application before passing it to the architect for joint approval[cite: 1]."
       },
       {
-        id: "e2-q63", source: "exam2", number: 63,
+        id: "e2-q63", source: "exam2", area: "area4", number: 63,
         text: "What is the registered Architect's legal responsibility regarding Special Inspections under Chapter 17 of the CBC?",
         options: [
           "Prepare and submit the Statement of Special Inspections to the building official",
@@ -1652,17 +1885,17 @@
           "Guarantee that the contractor's work is defect-free"
         ],
         correct: 0,
-        rationale: "The registered design professional prepares and submits the schedule/statement of special inspections to the building official."
+        rationale: "The registered design professional prepares and submits the schedule/statement of special inspections to the building official[cite: 1]."
       },
       {
-        id: "e2-q64", source: "exam2", number: 64,
+        id: "e2-q64", source: "exam2", area: "area5", number: 64,
         text: "In a construction surety performance or payment bond, who is the 'Principal'?",
         options: ["The Architect", "The Owner (Obligee)", "The General Contractor", "The Bonding Surety Company"],
         correct: 2,
-        rationale: "In surety bonding, the Contractor is the Principal (whose performance is guaranteed), the Owner is the Obligee, and the insurance carrier is the Surety."
+        rationale: "In surety bonding, the Contractor is the Principal (whose performance is guaranteed), the Owner is the Obligee, and the insurance carrier is the Surety[cite: 1]."
       },
       {
-        id: "e2-q65", source: "exam2", number: 65,
+        id: "e2-q65", source: "exam2", area: "area1", number: 65,
         text: "Which of the following is a primary characteristic of private binding arbitration compared to courtroom litigation?",
         options: [
           "Arbitration decisions can easily be appealed on legal errors",
@@ -1671,10 +1904,10 @@
           "Arbitration is open to public court reporters"
         ],
         correct: 1,
-        rationale: "Arbitration proceedings and awards are private and confidential, and grounds for judicial appeal are very limited."
+        rationale: "Arbitration proceedings and awards are private and confidential, and grounds for judicial appeal are very limited[cite: 1]."
       },
       {
-        id: "e2-q66", source: "exam2", number: 66,
+        id: "e2-q66", source: "exam2", area: "area5", number: 66,
         text: "In a construction contract, what is the definition of 'Liquidated Damages'?",
         options: [
           "A punitive fine assessed against the contractor for poor workmanship",
@@ -1683,24 +1916,24 @@
           "Compensation paid to subcontractors when work is shut down"
         ],
         correct: 2,
-        rationale: "Liquidated damages are a predetermined daily sum intended to compensate the owner for actual financial loss resulting from late completion (not a punitive penalty)."
+        rationale: "Liquidated damages are a predetermined daily sum intended to compensate the owner for actual financial loss resulting from late completion (not a punitive penalty)[cite: 1]."
       },
       {
-        id: "e2-q67", source: "exam2", number: 67,
+        id: "e2-q67", source: "exam2", area: "area5", number: 67,
         text: "Which of the following are recognized contract documents used to modify the construction work?\nA. Bulletins\nB. Change Orders\nC. Construction Change Directives (CCD)\nD. Orders for a Minor Change in the Work (ASI)",
         options: ["A, B and C", "A, B and D", "A, C and D", "B, C and D"],
         correct: 3,
-        rationale: "AIA A201 explicitly defines Change Orders, CCDs, and Architect's Orders for a Minor Change. 'Bulletin' is an informal term, not a contract modification document."
+        rationale: "AIA A201 explicitly defines Change Orders, CCDs, and Architect's Orders for a Minor Change[cite: 1]. 'Bulletin' is an informal term, not a contract modification document[cite: 1]."
       },
       {
-        id: "e2-q68", source: "exam2", number: 68,
+        id: "e2-q68", source: "exam2", area: "area5", number: 68,
         text: "Under AIA Document A201, how many days does the Architect have after receipt of the Contractor's Application for Payment to either certify or withhold payment?",
         options: ["5 days", "7 days", "10 days", "14 days"],
         correct: 1,
-        rationale: "AIA A201 § 9.4.1 requires the architect to either issue a Certificate for Payment or state reasons for withholding within 7 days."
+        rationale: "AIA A201 § 9.4.1 requires the architect to either issue a Certificate for Payment or state reasons for withholding within 7 days[cite: 1]."
       },
       {
-        id: "e2-q69", source: "exam2", number: 69,
+        id: "e2-q69", source: "exam2", area: "area5", number: 69,
         text: "Under AIA A201 § 14.1, which of the following is a valid ground for the Contractor to terminate the contract?",
         options: [
           "The work is suspended by the Owner for 10 days",
@@ -1709,24 +1942,32 @@
           "A subcontractor goes out of business"
         ],
         correct: 1,
-        rationale: "The contractor may terminate the contract if the work is stopped for 30 consecutive days by government order or court injunction through no fault of the contractor."
+        rationale: "The contractor may terminate the contract if the work is stopped for 30 consecutive days by government order or court injunction through no fault of the contractor[cite: 1]."
       },
       {
-        id: "e2-q70", source: "exam2", number: 70,
+        id: "e2-q70", source: "exam2", area: "area5", number: 70,
         text: "Which of the following must the Contractor submit to the Architect to receive Final Payment?\nA. Contractor's affidavit of payment of debts and claims (AIA G706)\nB. Consent of Surety to Final Payment (AIA G707)\nC. Final unconditional lien waivers and releases\nD. Building occupancy permit",
         options: ["A, B and C", "A, B and D", "A, C and D", "B, C and D"],
         correct: 0,
-        rationale: "G706, G707, and lien waivers are required closeout submittals for final payment. The certificate of occupancy is issued by the building official to the owner."
+        rationale: "G706, G707, and lien waivers are required closeout submittals for final payment[cite: 1]. The certificate of occupancy is issued by the building official to the owner[cite: 1]."
       }
     ];
   </script>
 
   <!-- SCRIPT APPLICATION LOGIC -->
   <script>
+    const CAB_AREAS = {
+      area1: { title: "Area I: Contract Dev & Project Planning (25%)", weight: 0.25 },
+      area2: { title: "Area II: SD & Discretionary Approvals (30%)", weight: 0.30 },
+      area3: { title: "Area III: Design Development (15%)", weight: 0.15 },
+      area4: { title: "Area IV: CD & Permitting (10%)", weight: 0.10 },
+      area5: { title: "Area V: Bidding & Construction (20%)", weight: 0.20 }
+    };
+
     let userState = {
       bookmarks: [],
       missedQuestionIds: [],
-      answeredQuestionIds: [], // Tracks all questions ever answered
+      answeredStems: [], // Text-normalized hash of all answered questions
       notes: {},
       history: []
     };
@@ -1744,13 +1985,19 @@
       timerInterval: null
     };
 
+    let isViewingArchive = false;
+
+    function normalizeStem(txt) {
+      return (txt || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
     function loadStateFromStorage() {
       const saved = localStorage.getItem('CSE_QUIZ_USER_DATA');
       if (saved) {
         try { 
           const parsed = JSON.parse(saved);
           userState = { ...userState, ...parsed };
-          if (!userState.answeredQuestionIds) userState.answeredQuestionIds = [];
+          if (!userState.answeredStems) userState.answeredStems = [];
         } catch (e) {}
       }
       updatePoolCountLabel();
@@ -1766,7 +2013,7 @@
       if (!el) return;
       const missedCount = userState.missedQuestionIds ? userState.missedQuestionIds.length : 0;
       const bookCount = userState.bookmarks ? userState.bookmarks.length : 0;
-      const answeredCount = userState.answeredQuestionIds ? userState.answeredQuestionIds.length : 0;
+      const answeredCount = userState.answeredStems ? userState.answeredStems.length : 0;
       el.innerHTML = `Total pool: <strong>${QUESTION_BANK.length}</strong> | Answered: <strong>${answeredCount}</strong> | Missed: <strong>${missedCount}</strong> | Flagged: <strong>${bookCount}</strong>`;
     }
 
@@ -1791,7 +2038,7 @@
           if (imported && typeof imported === 'object') {
             userState.bookmarks = imported.bookmarks || [];
             userState.missedQuestionIds = imported.missedQuestionIds || [];
-            userState.answeredQuestionIds = imported.answeredQuestionIds || [];
+            userState.answeredStems = imported.answeredStems || [];
             userState.notes = imported.notes || {};
             userState.history = imported.history || [];
             saveStateToStorage();
@@ -1808,8 +2055,11 @@
 
     function startQuiz(event) {
       if (event) event.preventDefault();
+      isViewingArchive = false;
+      document.getElementById('archive-banner').classList.add('hidden');
 
       const sourceVal = document.getElementById('cfg-source').value;
+      const areaVal = document.getElementById('cfg-area').value;
       const filterVal = document.getElementById('cfg-filter').value;
       const countVal = document.getElementById('cfg-count').value;
       const excludeUsed = document.getElementById('cfg-exclude-used').checked;
@@ -1823,12 +2073,18 @@
         pool = pool.filter(q => q.source === sourceVal);
       }
 
-      // 2. Exclude previously answered questions if selected
+      // 2. Filter by CAB Area
+      if (areaVal !== 'all') {
+        pool = pool.filter(q => q.area === areaVal);
+      }
+
+      // 3. Exclude already answered stems (robust deduplication across exams)
       if (excludeUsed) {
-        const remaining = pool.filter(q => !userState.answeredQuestionIds.includes(q.id));
+        const remaining = pool.filter(q => !userState.answeredStems.includes(normalizeStem(q.text)));
         if (remaining.length === 0) {
-          if (confirm("You have already answered all available questions in this category! Would you like to reset your answered history for these questions to start fresh?")) {
-            userState.answeredQuestionIds = userState.answeredQuestionIds.filter(id => !pool.some(q => q.id === id));
+          if (confirm("You have answered all available questions matching this filter! Would you like to reset your answered history for these questions to start fresh?")) {
+            const poolStems = new Set(pool.map(q => normalizeStem(q.text)));
+            userState.answeredStems = userState.answeredStems.filter(s => !poolStems.has(s));
             saveStateToStorage();
           } else {
             return;
@@ -1838,18 +2094,18 @@
         }
       }
 
-      // 3. Filter by missed or bookmarked
+      // 4. Filter by missed or bookmarked
       if (filterVal === 'missed') {
         pool = pool.filter(q => userState.missedQuestionIds.includes(q.id));
         if (pool.length === 0) {
-          alert("No previously missed questions found in this selection! Resetting to active pool.");
-          pool = QUESTION_BANK.filter(q => sourceVal === 'all' || q.source === sourceVal);
+          alert("No previously missed questions found matching this filter! Reverting to active pool.");
+          pool = QUESTION_BANK.filter(q => (sourceVal === 'all' || q.source === sourceVal) && (areaVal === 'all' || q.area === areaVal));
         }
       } else if (filterVal === 'bookmarked') {
         pool = pool.filter(q => userState.bookmarks.includes(q.id));
         if (pool.length === 0) {
-          alert("No flagged questions found in this selection! Resetting to active pool.");
-          pool = QUESTION_BANK.filter(q => sourceVal === 'all' || q.source === sourceVal);
+          alert("No flagged questions found matching this filter! Reverting to active pool.");
+          pool = QUESTION_BANK.filter(q => (sourceVal === 'all' || q.source === sourceVal) && (areaVal === 'all' || q.area === areaVal));
         }
       }
 
@@ -1900,6 +2156,7 @@
     }
 
     function getSourceTitle(src) {
+      if (src === 'ca_gaps') return 'High-Yield Gaps';
       if (src === 'core') return 'Core Practice';
       if (src === 'exam1') return 'Exam 1';
       if (src === 'exam2') return 'Exam 2';
@@ -1912,6 +2169,8 @@
 
       document.getElementById('q-counter').innerText = `Question ${currentSession.currentIndex + 1} of ${total}`;
       document.getElementById('q-source-tag').innerText = `${getSourceTitle(q.source)} #${q.number}`;
+      document.getElementById('q-area-tag').innerText = CAB_AREAS[q.area] ? CAB_AREAS[q.area].title : "General";
+      document.getElementById('q-id-tag').innerText = `#${q.id}`;
       document.getElementById('q-text').innerText = q.text;
 
       const isFlagged = userState.bookmarks.includes(q.id);
@@ -1996,7 +2255,6 @@
 
       document.getElementById('q-note-input').value = userState.notes[q.id] || '';
 
-      // Bottom Bar navigation states
       document.getElementById('btn-prev').disabled = (currentSession.currentIndex === 0);
       const isLast = (currentSession.currentIndex === total - 1);
       document.getElementById('btn-next').classList.toggle('hidden', isLast);
@@ -2007,9 +2265,10 @@
       const q = currentSession.questions[currentSession.currentIndex];
       currentSession.userAnswers[q.id] = optIdx;
 
-      // Mark as answered
-      if (!userState.answeredQuestionIds.includes(q.id)) {
-        userState.answeredQuestionIds.push(q.id);
+      // Mark stem as answered in global state immediately
+      const norm = normalizeStem(q.text);
+      if (!userState.answeredStems.includes(norm)) {
+        userState.answeredStems.push(norm);
       }
 
       if (currentSession.mode === 'instant') {
@@ -2085,14 +2344,34 @@
       let correctCount = 0;
       let confidentCorrect = 0;
       const total = currentSession.questions.length;
+      const snapshots = [];
+
+      // Performance breakdown by Area
+      const areaStats = {
+        area1: { correct: 0, total: 0 },
+        area2: { correct: 0, total: 0 },
+        area3: { correct: 0, total: 0 },
+        area4: { correct: 0, total: 0 },
+        area5: { correct: 0, total: 0 }
+      };
 
       currentSession.questions.forEach(q => {
         const userChoice = currentSession.userAnswers[q.id];
-        if (userChoice !== undefined && !userState.answeredQuestionIds.includes(q.id)) {
-          userState.answeredQuestionIds.push(q.id);
+        const isRight = (userChoice === q.correct);
+        const a = q.area || "area1";
+
+        if (areaStats[a]) {
+          areaStats[a].total++;
+          if (isRight) areaStats[a].correct++;
         }
 
-        const isRight = (userChoice === q.correct);
+        snapshots.push({
+          questionId: q.id,
+          userAnswer: userChoice,
+          confidence: currentSession.confidences[q.id] || "none",
+          isCorrect: isRight
+        });
+
         if (isRight) {
           correctCount++;
           if (currentSession.confidences[q.id] === 'confident') confidentCorrect++;
@@ -2108,47 +2387,81 @@
       const passed = percent >= 70;
 
       const historyEntry = {
+        id: `sess-${Date.now()}`,
         date: new Date().toLocaleDateString(),
         total: total,
         correct: correctCount,
         percent: percent,
         timeSeconds: currentSession.timeElapsed,
-        passed: passed
+        passed: passed,
+        areaStats: areaStats,
+        snapshots: snapshots
       };
+
       userState.history.unshift(historyEntry);
       saveStateToStorage();
 
-      document.getElementById('res-percent').innerText = `${percent}%`;
-      document.getElementById('res-percent').className = `text-2xl sm:text-3xl font-black mt-1 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
-      document.getElementById('res-ratio').innerText = `${correctCount} of ${total} correct`;
-      document.getElementById('res-status').innerText = passed ? "PASS" : "FAIL";
-      document.getElementById('res-status').className = `text-xl sm:text-2xl font-black mt-2 ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
-
-      const mins = Math.floor(currentSession.timeElapsed / 60);
-      const secs = currentSession.timeElapsed % 60;
-      document.getElementById('res-time').innerText = `${mins}m ${secs}s`;
-      const pace = total > 0 ? Math.round(currentSession.timeElapsed / total) : 0;
-      document.getElementById('res-pace').innerText = `${pace}s / question`;
-      document.getElementById('res-confidence-breakdown').innerText = `${confidentCorrect} / ${correctCount}`;
-
-      renderReviewList('all');
+      renderResultsFromData(historyEntry, currentSession.questions);
       navigate('results-view');
     }
 
-    function renderReviewList(filter) {
+    function renderResultsFromData(sessionData, questionList) {
+      document.getElementById('res-date').innerText = `Completed on ${sessionData.date}`;
+      document.getElementById('res-percent').innerText = `${sessionData.percent}%`;
+      document.getElementById('res-percent').className = `text-2xl sm:text-3xl font-black mt-1 ${sessionData.passed ? 'text-emerald-600' : 'text-rose-600'}`;
+      document.getElementById('res-ratio').innerText = `${sessionData.correct} of ${sessionData.total} correct`;
+      document.getElementById('res-status').innerText = sessionData.passed ? "PASS" : "FAIL";
+      document.getElementById('res-status').className = `text-xl sm:text-2xl font-black mt-2 ${sessionData.passed ? 'text-emerald-600' : 'text-rose-600'}`;
+
+      const mins = Math.floor(sessionData.timeSeconds / 60);
+      const secs = sessionData.timeSeconds % 60;
+      document.getElementById('res-time').innerText = `${mins}m ${secs}s`;
+      const pace = sessionData.total > 0 ? Math.round(sessionData.timeSeconds / sessionData.total) : 0;
+      document.getElementById('res-pace').innerText = `${pace}s / question`;
+
+      // Render Area breakdown bars
+      const areaContainer = document.getElementById('res-area-breakdown');
+      areaContainer.innerHTML = '';
+      Object.keys(CAB_AREAS).forEach(key => {
+        const stat = (sessionData.areaStats && sessionData.areaStats[key]) ? sessionData.areaStats[key] : { correct: 0, total: 0 };
+        const pct = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+
+        const bar = document.createElement('div');
+        bar.className = "space-y-1";
+        bar.innerHTML = `
+          <div class="flex justify-between items-center text-[11px] text-slate-700">
+            <span class="font-medium">${CAB_AREAS[key].title}</span>
+            <span class="font-mono">${stat.correct}/${stat.total} (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div class="h-full ${pct >= 70 ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${pct}%"></div>
+          </div>
+        `;
+        areaContainer.appendChild(bar);
+      });
+
+      renderReviewList('all', sessionData, questionList);
+    }
+
+    function renderReviewList(filter, sessionData, questionList) {
       const container = document.getElementById('review-list');
       container.innerHTML = '';
 
-      currentSession.questions.forEach((q, idx) => {
-        const userChoice = currentSession.userAnswers[q.id];
-        const isCorrect = (userChoice === q.correct);
+      const sData = sessionData || userState.history[0];
+      if (!sData || !sData.snapshots) return;
+
+      sData.snapshots.forEach((snap, idx) => {
+        const q = (questionList || QUESTION_BANK).find(item => item.id === snap.questionId);
+        if (!q) return;
+
+        const isCorrect = snap.isCorrect;
         const isFlagged = userState.bookmarks.includes(q.id);
 
         if (filter === 'incorrect' && isCorrect) return;
         if (filter === 'flagged' && !isFlagged) return;
 
         const item = document.createElement('div');
-        item.className = `p-4 border rounded-xl space-y-3 ${
+        item.className = `p-4 border rounded-xl space-y-2.5 ${
           isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'
         }`;
 
@@ -2159,13 +2472,14 @@
             </span>
             <span class="text-xs text-slate-400 font-mono">${getSourceTitle(q.source)} #${q.number}</span>
           </div>
+          <div class="text-xs text-slate-500 font-semibold">${CAB_AREAS[q.area] ? CAB_AREAS[q.area].title : ""}</div>
           <div class="text-xs sm:text-sm font-medium text-slate-800 whitespace-pre-line">${q.text}</div>
           <div class="text-xs space-y-1">
-            <div class="text-slate-700"><strong>Your Answer:</strong> ${userChoice !== undefined ? q.options[userChoice] : '<em>Unanswered</em>'}</div>
+            <div class="text-slate-700"><strong>Your Answer:</strong> ${snap.userAnswer !== undefined ? q.options[snap.userAnswer] : '<em>Unanswered</em>'}</div>
             <div class="text-slate-900 font-semibold"><strong>Correct Answer:</strong> ${q.options[q.correct]}</div>
           </div>
           <div class="p-3 bg-white/80 rounded border border-slate-200 text-xs text-slate-600 leading-relaxed">
-            <strong>Explanation / Citation:</strong> ${q.rationale || "No specific note."}
+            <strong>Explanation / Statutory Citation:</strong> ${q.rationale || "No specific note."}
           </div>
         `;
         container.appendChild(item);
@@ -2174,6 +2488,18 @@
 
     function filterReview(type) {
       renderReviewList(type);
+    }
+
+    function viewHistoricalAttempt(sessionId) {
+      const entry = userState.history.find(h => h.id === sessionId);
+      if (!entry) return;
+
+      isViewingArchive = true;
+      document.getElementById('archive-banner').classList.remove('hidden');
+
+      const questions = entry.snapshots.map(s => QUESTION_BANK.find(q => q.id === s.questionId)).filter(Boolean);
+      renderResultsFromData(entry, questions);
+      navigate('results-view');
     }
 
     function renderHistory() {
@@ -2191,6 +2517,8 @@
         const row = document.createElement('tr');
         const mins = Math.floor(h.timeSeconds / 60);
         const secs = h.timeSeconds % 60;
+        row.className = "hover:bg-slate-50 transition cursor-pointer";
+        row.onclick = () => viewHistoricalAttempt(h.id);
         row.innerHTML = `
           <td class="py-2.5 px-3">${h.date}</td>
           <td class="py-2.5 px-3">${h.total} Qs</td>
@@ -2200,6 +2528,9 @@
             <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${h.passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
               ${h.passed ? 'PASS' : 'FAIL'}
             </span>
+          </td>
+          <td class="py-2.5 px-3 text-right">
+            <button class="text-sky-600 hover:text-sky-800 font-medium text-xs">Review &rarr;</button>
           </td>
         `;
         tbody.appendChild(row);
@@ -2212,7 +2543,6 @@
       });
       document.getElementById(viewId).classList.remove('hidden');
 
-      // Toggle bottom floating bar visibility
       const bottomBar = document.getElementById('quiz-bottom-bar');
       if (viewId === 'quiz-view') {
         bottomBar.classList.remove('hidden');
