@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSE Question Bank Editor & CSV Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen p-4 sm:p-6 font-sans">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
+      <h1 class="text-2xl font-black text-slate-900">CSE Quiz Bank Editor & CSV Manager</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">Load your <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> file, add single questions, import/export CSV files with duplicate resolution, and download an updated HTML application.</p>
+    </div>
+
+    <!-- Step 1: Load HTML File -->
+    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm sm:text-base font-bold text-slate-800">Step 1: Load Existing Quiz Bank HTML</h2>
+        <span id="load-status" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">No file loaded</span>
+      </div>
+      <input type="file" id="htmlFileInput" accept=".html,.htm" class="block w-full text-xs sm:text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer" onchange="loadHtmlFile(event)">
+      <div id="bank-summary" class="hidden text-xs sm:text-sm bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-lg"></div>
+    </div>
+
+    <!-- Step 2: CSV Operations & Deduplication -->
+    <div id="csv-section" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-slate-800">CSV Import & Export</h2>
+          <p class="text-xs text-slate-500">Easily manage your question pool in spreadsheets (Excel, Google Sheets).</p>
+        </div>
+        <button onclick="exportBankToCSV()" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 flex items-center gap-1.5 self-start sm:self-auto transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span>Export Current Bank as CSV</span>
+        </button>
+      </div>
+
+      <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+        <label class="block text-xs font-semibold text-slate-700">Import Questions from CSV File:</label>
+        <p class="text-[11px] text-slate-500">Expected CSV header columns: <code class="bg-white px-1 py-0.5 rounded border">source, number, text, option1, option2, option3, option4, correct, rationale</code></p>
+        <input type="file" id="csvFileInput" accept=".csv" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer" onchange="handleCSVUpload(event)">
+      </div>
+    </div>
+
+    <!-- Step 3: Add Individual Question -->
+    <div id="editor-section" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h2 class="text-sm sm:text-base font-bold text-slate-800">Add Individual Question</h2>
+        <span class="text-xs text-slate-400">Manual Entry</span>
+      </div>
+
+      <form id="new-q-form" onsubmit="handleFormAdd(event)" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Source / Category Tag</label>
+            <input type="text" id="form-source" placeholder="e.g. mock3, ceqa_drills, title24" required class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Question Number in Source</label>
+            <input type="number" id="form-number" placeholder="e.g. 1" required class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Question Prompt</label>
+          <textarea id="form-text" rows="3" required placeholder="Type or paste question prompt here..." class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold text-slate-600">Multiple Choice Options (Select radio for correct answer)</label>
+          
+          <div class="flex items-center gap-2">
+            <input type="radio" name="form-correct" value="0" checked class="text-sky-600 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-500 w-4">1.</span>
+            <input type="text" id="form-opt-0" required placeholder="Option 1" class="flex-1 text-xs sm:text-sm p-2 border rounded-lg outline-none">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="form-correct" value="1" class="text-sky-600 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-500 w-4">2.</span>
+            <input type="text" id="form-opt-1" required placeholder="Option 2" class="flex-1 text-xs sm:text-sm p-2 border rounded-lg outline-none">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="form-correct" value="2" class="text-sky-600 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-500 w-4">3.</span>
+            <input type="text" id="form-opt-2" required placeholder="Option 3" class="flex-1 text-xs sm:text-sm p-2 border rounded-lg outline-none">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="radio" name="form-correct" value="3" class="text-sky-600 focus:ring-sky-500">
+            <span class="text-xs font-bold text-slate-500 w-4">4.</span>
+            <input type="text" id="form-opt-3" required placeholder="Option 4" class="flex-1 text-xs sm:text-sm p-2 border rounded-lg outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Explanation / Statutory Citation</label>
+          <textarea id="form-rationale" rows="2" placeholder="Statutory citation (e.g. B&P Code § 5536, CBC 11B) and explanation..." class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none"></textarea>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold px-5 py-2 rounded-lg transition">
+            + Add to Loaded Bank
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step 4: Export HTML -->
+    <div id="export-section" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h2 class="text-sm sm:text-base font-bold text-slate-800">Step 4: Save & Download Updated HTML</h2>
+        <p class="text-xs text-slate-500">Generates a fresh <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> ready to open in any browser.</p>
+      </div>
+      <button onclick="exportUpdatedHtml()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-lg shadow-sm transition flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+        <span>Download Updated HTML</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- DUPLICATE RESOLUTION MODAL -->
+  <div id="duplicate-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+      <h3 class="font-bold text-base text-slate-900">Duplicate Questions Detected</h3>
+      <p class="text-xs text-slate-600 leading-relaxed" id="dup-modal-msg">
+        Some questions in your CSV appear to already exist in the question bank. How would you like to resolve them?
+      </p>
+      <div class="space-y-2 pt-2">
+        <button onclick="resolveDuplicates('skip')" class="w-full text-left p-3 border rounded-lg hover:bg-slate-50 text-xs transition">
+          <strong class="block text-slate-800">1. Skip Duplicates (Recommended)</strong>
+          <span class="text-slate-500">Keep existing questions unchanged and only append genuinely new questions.</span>
+        </button>
+        <button onclick="resolveDuplicates('overwrite')" class="w-full text-left p-3 border rounded-lg hover:bg-slate-50 text-xs transition">
+          <strong class="block text-slate-800">2. Overwrite / Update Existing</strong>
+          <span class="text-slate-500">Replace existing questions with incoming CSV versions (useful for correcting typos or citations).</span>
+        </button>
+        <button onclick="resolveDuplicates('keep-both')" class="w-full text-left p-3 border rounded-lg hover:bg-slate-50 text-xs transition">
+          <strong class="block text-slate-800">3. Keep Both</strong>
+          <span class="text-slate-500">Import everything regardless of duplication.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let rawHtml = "";
+    let extractedBank = [];
+    let pendingCsvQuestions = [];
+    let pendingDuplicates = [];
+
+    function loadHtmlFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        rawHtml = e.target.result;
+
+        const match = rawHtml.match(/const QUESTION_BANK = (\[[\s\S]*?\]);\s*<\/script>/);
+        if (!match) {
+          alert("Could not locate the 'const QUESTION_BANK' array in this file. Please ensure you uploaded a valid cse_quiz_bank.html file.");
+          return;
+        }
+
+        try {
+          extractedBank = eval(match[1]);
+          document.getElementById('load-status').innerText = "Loaded Successfully";
+          document.getElementById('load-status').className = "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-semibold";
+
+          updateSummaryText(file.name);
+
+          document.getElementById('csv-section').classList.remove('hidden');
+          document.getElementById('editor-section').classList.remove('hidden');
+          document.getElementById('export-section').classList.remove('hidden');
+        } catch (err) {
+          alert("Error parsing the question bank array: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function normalizeText(txt) {
+      return (txt || "").toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function handleFormAdd(e) {
+      e.preventDefault();
+      const source = document.getElementById('form-source').value.trim();
+      const number = parseInt(document.getElementById('form-number').value, 10);
+      const text = document.getElementById('form-text').value.trim();
+      const opts = [
+        document.getElementById('form-opt-0').value.trim(),
+        document.getElementById('form-opt-1').value.trim(),
+        document.getElementById('form-opt-2').value.trim(),
+        document.getElementById('form-opt-3').value.trim()
+      ];
+      const correct = parseInt(document.querySelector('input[name="form-correct"]:checked').value, 10);
+      const rationale = document.getElementById('form-rationale').value.trim();
+
+      // Check duplicate
+      const norm = normalizeText(text);
+      const isDup = extractedBank.some(q => normalizeText(q.text) === norm);
+      if (isDup && !confirm("A question with identical or nearly identical prompt text already exists. Do you still want to add it?")) {
+        return;
+      }
+
+      const newQ = {
+        id: `${source}-q${Date.now().toString().slice(-4)}`,
+        source: source,
+        number: number,
+        text: text,
+        options: opts,
+        correct: correct,
+        rationale: rationale
+      };
+
+      extractedBank.push(newQ);
+      alert(`Question added! Bank count: ${extractedBank.length}`);
+
+      document.getElementById('form-text').value = '';
+      document.getElementById('form-opt-0').value = '';
+      document.getElementById('form-opt-1').value = '';
+      document.getElementById('form-opt-2').value = '';
+      document.getElementById('form-opt-3').value = '';
+      document.getElementById('form-rationale').value = '';
+      document.getElementById('form-number').value = number + 1;
+
+      updateSummaryText();
+    }
+
+    // ---------------------------------------------------------
+    // CSV EXPORT ENGINE
+    // ---------------------------------------------------------
+    function exportBankToCSV() {
+      if (!extractedBank || extractedBank.length === 0) {
+        alert("Question bank is empty.");
+        return;
+      }
+
+      const headers = ["id", "source", "number", "text", "option1", "option2", "option3", "option4", "correct", "rationale"];
+      const rows = [headers];
+
+      extractedBank.forEach(q => {
+        const row = [
+          q.id || "",
+          q.source || "",
+          q.number || "",
+          escapeCsvCell(q.text),
+          escapeCsvCell(q.options[0] || ""),
+          escapeCsvCell(q.options[1] || ""),
+          escapeCsvCell(q.options[2] || ""),
+          escapeCsvCell(q.options[3] || ""),
+          (q.correct !== undefined) ? (q.correct + 1) : "1", // Export 1-indexed for readability
+          escapeCsvCell(q.rationale || "")
+        ];
+        rows.push(row);
+      });
+
+      const csvContent = rows.map(r => r.join(",")).join("\r\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `cse_questions_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function escapeCsvCell(cell) {
+      const str = String(cell);
+      if (str.includes(",") || str.includes("\"") || str.includes("\n") || str.includes("\r")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    }
+
+    // ---------------------------------------------------------
+    // CSV PARSER (RFC 4180 COMPLIANT)
+    // ---------------------------------------------------------
+    function parseCSV(text) {
+      const lines = [];
+      let row = [""];
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i+1];
+
+        if (c === '"') {
+          if (inQuotes && next === '"') {
+            row[row.length - 1] += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === ',' && !inQuotes) {
+          row.push('');
+        } else if ((c === '\r' || c === '\n') && !inQuotes) {
+          if (c === '\r' && next === '\n') { i++; }
+          lines.push(row);
+          row = [''];
+        } else {
+          row[row.length - 1] += c;
+        }
+      }
+      if (row.length > 1 || row[0] !== '') {
+        lines.push(row);
+      }
+      return lines;
+    }
+
+    function handleCSVUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const rawText = e.target.result;
+          const parsed = parseCSV(rawText);
+          if (parsed.length < 2) {
+            alert("CSV file appears to be empty or missing header rows.");
+            return;
+          }
+
+          // Header map
+          const header = parsed[0].map(h => h.trim().toLowerCase());
+          const textIdx = header.findIndex(h => h.includes("text") || h.includes("question") || h.includes("prompt"));
+          const opt1Idx = header.findIndex(h => h.includes("option1") || h.includes("choice1") || h.includes("opt1"));
+          const opt2Idx = header.findIndex(h => h.includes("option2") || h.includes("choice2") || h.includes("opt2"));
+          const opt3Idx = header.findIndex(h => h.includes("option3") || h.includes("choice3") || h.includes("opt3"));
+          const opt4Idx = header.findIndex(h => h.includes("option4") || h.includes("choice4") || h.includes("opt4"));
+          const correctIdx = header.findIndex(h => h.includes("correct") || h.includes("answer"));
+          const rationaleIdx = header.findIndex(h => h.includes("rationale") || h.includes("explanation") || h.includes("citation"));
+          const sourceIdx = header.findIndex(h => h.includes("source"));
+          const numIdx = header.findIndex(h => h.includes("num"));
+
+          if (textIdx === -1 || opt1Idx === -1 || opt2Idx === -1) {
+            alert("CSV headers missing required columns. Need at least 'text', 'option1', 'option2', 'correct'.");
+            return;
+          }
+
+          const incoming = [];
+          for (let i = 1; i < parsed.length; i++) {
+            const r = parsed[i];
+            if (!r || r.length < 3 || !r[textIdx]) continue;
+
+            const qText = r[textIdx].trim();
+            const optList = [
+              r[opt1Idx] ? r[opt1Idx].trim() : "",
+              r[opt2Idx] ? r[opt2Idx].trim() : "",
+              opt3Idx > -1 && r[opt3Idx] ? r[opt3Idx].trim() : "",
+              opt4Idx > -1 && r[opt4Idx] ? r[opt4Idx].trim() : ""
+            ].filter(Boolean);
+
+            let corr = 0;
+            if (correctIdx > -1 && r[correctIdx]) {
+              const parsedVal = parseInt(r[correctIdx].trim(), 10);
+              // Handle 1-indexed (1-4) or 0-indexed (0-3)
+              corr = (!isNaN(parsedVal) && parsedVal >= 1 && parsedVal <= 4) ? (parsedVal - 1) : 0;
+            }
+
+            const src = (sourceIdx > -1 && r[sourceIdx]) ? r[sourceIdx].trim() : "csv_import";
+            const num = (numIdx > -1 && r[numIdx]) ? parseInt(r[numIdx].trim(), 10) : i;
+            const rat = (rationaleIdx > -1 && r[rationaleIdx]) ? r[rationaleIdx].trim() : "";
+
+            incoming.push({
+              id: `${src}-q${Date.now().toString().slice(-4)}${i}`,
+              source: src,
+              number: isNaN(num) ? i : num,
+              text: qText,
+              options: optList,
+              correct: corr,
+              rationale: rat
+            });
+          }
+
+          // Duplicate detection check
+          pendingCsvQuestions = incoming;
+          pendingDuplicates = [];
+
+          incoming.forEach(inQ => {
+            const norm = normalizeText(inQ.text);
+            const found = extractedBank.find(existQ => normalizeText(existQ.text) === norm);
+            if (found) {
+              pendingDuplicates.push({ incoming: inQ, existing: found });
+            }
+          });
+
+          if (pendingDuplicates.length > 0) {
+            document.getElementById('dup-modal-msg').innerHTML = `
+              Found <strong>${pendingDuplicates.length}</strong> duplicate question(s) between the CSV and the loaded bank of ${extractedBank.length} items.
+            `;
+            document.getElementById('duplicate-modal').classList.remove('hidden');
+          } else {
+            extractedBank.push(...incoming);
+            alert(`Successfully imported all ${incoming.length} questions from CSV!`);
+            updateSummaryText();
+          }
+
+        } catch (err) {
+          alert("Error parsing CSV: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function resolveDuplicates(strategy) {
+      document.getElementById('duplicate-modal').classList.add('hidden');
+
+      if (strategy === 'skip') {
+        const dupNorms = new Set(pendingDuplicates.map(d => normalizeText(d.incoming.text)));
+        const nonDups = pendingCsvQuestions.filter(q => !dupNorms.has(normalizeText(q.text)));
+        extractedBank.push(...nonDups);
+        alert(`Imported ${nonDups.length} new questions (skipped ${pendingDuplicates.length} duplicates).`);
+      } else if (strategy === 'overwrite') {
+        let overwritten = 0;
+        pendingDuplicates.forEach(d => {
+          const idx = extractedBank.findIndex(q => q.id === d.existing.id);
+          if (idx > -1) {
+            extractedBank[idx] = { ...d.incoming, id: d.existing.id };
+            overwritten++;
+          }
+        });
+        const dupNorms = new Set(pendingDuplicates.map(d => normalizeText(d.incoming.text)));
+        const nonDups = pendingCsvQuestions.filter(q => !dupNorms.has(normalizeText(q.text)));
+        extractedBank.push(...nonDups);
+        alert(`Overwrote ${overwritten} existing questions and appended ${nonDups.length} new ones.`);
+      } else if (strategy === 'keep-both') {
+        extractedBank.push(...pendingCsvQuestions);
+        alert(`Appended all ${pendingCsvQuestions.length} questions from CSV.`);
+      }
+
+      updateSummaryText();
+    }
+
+    function updateSummaryText(filename) {
+      const summary = document.getElementById('bank-summary');
+      summary.classList.remove('hidden');
+      summary.innerHTML = `Question bank currently holds <strong>${extractedBank.length}</strong> questions.`;
+    }
+
+    function exportUpdatedHtml() {
+      if (!rawHtml || extractedBank.length === 0) {
+        alert("No active bank loaded.");
+        return;
+      }
+
+      const jsonString = JSON.stringify(extractedBank, null, 2);
+      const replacement = `const QUESTION_BANK = ${jsonString};\n  <\/script>`;
+      const newHtml = rawHtml.replace(/const QUESTION_BANK = (\[[\s\S]*?\]);\s*<\/script>/, replacement);
+
+      const blob = new Blob([newHtml], { type: "text/html;charset=utf-8" });
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.href = URL.createObjectURL(blob);
+      downloadAnchor.download = "cse_quiz_bank.html";
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+  </script>
+</body>
+</html>
