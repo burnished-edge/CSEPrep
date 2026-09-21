@@ -1540,17 +1540,27 @@
       },
       {
         id: "e2-q27", source: "exam2", area: "area1", number: 27,
-        text: "To form a Registered Limited Liability Partnership (LLP) in California, the entity must file registration with which agency?",
-        options: ["California Secretary of State", "Department of Consumer Affairs", "Business and Transportation Agency", "Department of Corporations"],
-        correct: 0,
-        rationale: "All corporate, LLC, and LLP entity registrations are filed with the California Secretary of State[cite: 1]."
+        text: "Which of the following is NOT a rule of professional conduct in the California Code of Regulations Title 16?",
+        options: [
+          "An architect shall only accept work that he/she is qualified to perform by education, training, and experience",
+          "An architect shall exercise responsible control when practicing architecture",
+          "In designing a project, an architect shall have knowledge of all applicable building laws, codes, and regulations",
+          "Whenever the Board is conducting an investigation, an architect is required to respond within 30 days"
+        ],
+        correct: 1,
+        rationale: "The standard of care rule states an architect shall exercise reasonable skill and care[cite: 1]. 'Responsible control' is a statutory definition for sealing documents, not phrased as this conduct rule[cite: 1]."
       },
       {
         id: "e2-q28", source: "exam2", area: "area1", number: 28,
-        text: "California state administrative regulations governing architect firm naming and advertising are found in which title?",
-        options: ["Title 2: Administration", "Title 4: Business Regulations", "Title 11: Law", "Title 16: Professional and Vocational Regulations"],
+        text: "Which of the following acts governs professional corporations in California?",
+        options: [
+          "Brown Reagan Professional Corporation Act",
+          "Deukmejian Wilson Professional Corporation Act",
+          "Davis Schwarzenegger Professional Corporation Act",
+          "Moscone Knox Professional Corporation Act"
+        ],
         correct: 3,
-        rationale: "Title 16, Division 2 contains the rules and regulations of the California Architects Board[cite: 1]."
+        rationale: "The Moscone-Knox Professional Corporation Act (CA Corp Code § 13400) governs professional corporations[cite: 1]."
       },
       {
         id: "e2-q29", source: "exam2", area: "area2", number: 29,
@@ -1967,7 +1977,7 @@
     let userState = {
       bookmarks: [],
       missedQuestionIds: [],
-      answeredStems: [], // Text-normalized hash of all answered questions
+      answeredStems: [],
       notes: {},
       history: []
     };
@@ -2109,6 +2119,7 @@
         }
       }
 
+      // Shuffle question order
       pool.sort(() => Math.random() - 0.5);
 
       let qCount = pool.length;
@@ -2117,7 +2128,29 @@
       }
       pool = pool.slice(0, qCount);
 
-      currentSession.questions = pool;
+      // ==============================================================
+      // RANDOMIZE / SHUFFLE OPTIONS FOR EVERY QUESTION IN THE SESSION
+      // ==============================================================
+      currentSession.questions = pool.map(q => {
+        let mappedOpts = q.options.map((optText, origIdx) => ({
+          text: optText,
+          isCorrect: (origIdx === q.correct)
+        }));
+
+        for (let i = mappedOpts.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [mappedOpts[i], mappedOpts[j]] = [mappedOpts[j], mappedOpts[i]];
+        }
+
+        const newCorrectIndex = mappedOpts.findIndex(o => o.isCorrect);
+
+        return {
+          ...q,
+          options: mappedOpts.map(o => o.text),
+          correct: newCorrectIndex
+        };
+      });
+
       currentSession.currentIndex = 0;
       currentSession.userAnswers = {};
       currentSession.confidences = {};
@@ -2346,7 +2379,6 @@
       const total = currentSession.questions.length;
       const snapshots = [];
 
-      // Performance breakdown by Area
       const areaStats = {
         area1: { correct: 0, total: 0 },
         area2: { correct: 0, total: 0 },
@@ -2369,7 +2401,9 @@
           questionId: q.id,
           userAnswer: userChoice,
           confidence: currentSession.confidences[q.id] || "none",
-          isCorrect: isRight
+          isCorrect: isRight,
+          optionsSnapshot: [...q.options],
+          correctSnapshot: q.correct
         });
 
         if (isRight) {
@@ -2419,7 +2453,6 @@
       const pace = sessionData.total > 0 ? Math.round(sessionData.timeSeconds / sessionData.total) : 0;
       document.getElementById('res-pace').innerText = `${pace}s / question`;
 
-      // Render Area breakdown bars
       const areaContainer = document.getElementById('res-area-breakdown');
       areaContainer.innerHTML = '';
       Object.keys(CAB_AREAS).forEach(key => {
@@ -2460,6 +2493,9 @@
         if (filter === 'incorrect' && isCorrect) return;
         if (filter === 'flagged' && !isFlagged) return;
 
+        const activeOptions = snap.optionsSnapshot || q.options;
+        const correctIndex = (snap.correctSnapshot !== undefined) ? snap.correctSnapshot : q.correct;
+
         const item = document.createElement('div');
         item.className = `p-4 border rounded-xl space-y-2.5 ${
           isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-rose-50/40 border-rose-200'
@@ -2475,8 +2511,8 @@
           <div class="text-xs text-slate-500 font-semibold">${CAB_AREAS[q.area] ? CAB_AREAS[q.area].title : ""}</div>
           <div class="text-xs sm:text-sm font-medium text-slate-800 whitespace-pre-line">${q.text}</div>
           <div class="text-xs space-y-1">
-            <div class="text-slate-700"><strong>Your Answer:</strong> ${snap.userAnswer !== undefined ? q.options[snap.userAnswer] : '<em>Unanswered</em>'}</div>
-            <div class="text-slate-900 font-semibold"><strong>Correct Answer:</strong> ${q.options[q.correct]}</div>
+            <div class="text-slate-700"><strong>Your Answer:</strong> ${snap.userAnswer !== undefined ? activeOptions[snap.userAnswer] : '<em>Unanswered</em>'}</div>
+            <div class="text-slate-900 font-semibold"><strong>Correct Answer:</strong> ${activeOptions[correctIndex]}</div>
           </div>
           <div class="p-3 bg-white/80 rounded border border-slate-200 text-xs text-slate-600 leading-relaxed">
             <strong>Explanation / Statutory Citation:</strong> ${q.rationale || "No specific note."}
