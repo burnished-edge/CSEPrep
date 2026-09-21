@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSE Question Bank Editor & CSV Suite</title>
+  <title>CSE Question Bank Maintenance & CSV Suite</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen p-4 sm:p-6 font-sans">
   <div class="max-w-4xl mx-auto space-y-6">
 
     <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200">
-      <h1 class="text-2xl font-black text-slate-900">CSE Quiz Bank Editor & CSV Manager</h1>
-      <p class="text-xs sm:text-sm text-slate-500 mt-1">Load your <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> file, add single questions, import/export CSV files with duplicate resolution, and download an updated HTML application.</p>
+      <h1 class="text-2xl font-black text-slate-900">CSE Question Bank Editor & CSV Suite</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">Load your <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> file, map questions across the 5 CAB Content Areas, import/export CSVs, resolve duplicates, and download an updated HTML application.</p>
     </div>
 
     <!-- Step 1: Load HTML File -->
@@ -29,17 +29,17 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div>
           <h2 class="text-sm sm:text-base font-bold text-slate-800">CSV Import & Export</h2>
-          <p class="text-xs text-slate-500">Easily manage your question pool in spreadsheets (Excel, Google Sheets).</p>
+          <p class="text-xs text-slate-500">Includes the 5 CAB Content Areas: <code class="text-sky-700">area1, area2, area3, area4, area5</code>.</p>
         </div>
         <button onclick="exportBankToCSV()" class="px-3.5 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-700 flex items-center gap-1.5 self-start sm:self-auto transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span>Export Current Bank as CSV</span>
+          <span>Export Bank to CSV</span>
         </button>
       </div>
 
       <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
         <label class="block text-xs font-semibold text-slate-700">Import Questions from CSV File:</label>
-        <p class="text-[11px] text-slate-500">Expected CSV header columns: <code class="bg-white px-1 py-0.5 rounded border">source, number, text, option1, option2, option3, option4, correct, rationale</code></p>
+        <p class="text-[11px] text-slate-500">Header columns: <code class="bg-white px-1 py-0.5 rounded border">source, area, number, text, option1, option2, option3, option4, correct, rationale</code></p>
         <input type="file" id="csvFileInput" accept=".csv" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer" onchange="handleCSVUpload(event)">
       </div>
     </div>
@@ -52,10 +52,20 @@
       </div>
 
       <form id="new-q-form" onsubmit="handleFormAdd(event)" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Source / Category Tag</label>
-            <input type="text" id="form-source" placeholder="e.g. mock3, ceqa_drills, title24" required class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Source Tag</label>
+            <input type="text" id="form-source" placeholder="e.g. ca_gaps, mock3, title24" required class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">CAB Content Area</label>
+            <select id="form-area" class="w-full text-xs sm:text-sm p-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none bg-white">
+              <option value="area1">Area I: Contract Dev & Planning (25%)</option>
+              <option value="area2">Area II: SD & Discretionary (30%)</option>
+              <option value="area3">Area III: Design Development (15%)</option>
+              <option value="area4">Area IV: CD & Permitting (10%)</option>
+              <option value="area5">Area V: Bidding & Construction (20%)</option>
+            </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600 mb-1">Question Number in Source</label>
@@ -128,7 +138,7 @@
     <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
       <h3 class="font-bold text-base text-slate-900">Duplicate Questions Detected</h3>
       <p class="text-xs text-slate-600 leading-relaxed" id="dup-modal-msg">
-        Some questions in your CSV appear to already exist in the question bank. How would you like to resolve them?
+        Some questions in your CSV appear to already exist in the question bank.
       </p>
       <div class="space-y-2 pt-2">
         <button onclick="resolveDuplicates('skip')" class="w-full text-left p-3 border rounded-lg hover:bg-slate-50 text-xs transition">
@@ -191,6 +201,7 @@
     function handleFormAdd(e) {
       e.preventDefault();
       const source = document.getElementById('form-source').value.trim();
+      const area = document.getElementById('form-area').value;
       const number = parseInt(document.getElementById('form-number').value, 10);
       const text = document.getElementById('form-text').value.trim();
       const opts = [
@@ -202,7 +213,6 @@
       const correct = parseInt(document.querySelector('input[name="form-correct"]:checked').value, 10);
       const rationale = document.getElementById('form-rationale').value.trim();
 
-      // Check duplicate
       const norm = normalizeText(text);
       const isDup = extractedBank.some(q => normalizeText(q.text) === norm);
       if (isDup && !confirm("A question with identical or nearly identical prompt text already exists. Do you still want to add it?")) {
@@ -212,6 +222,7 @@
       const newQ = {
         id: `${source}-q${Date.now().toString().slice(-4)}`,
         source: source,
+        area: area,
         number: number,
         text: text,
         options: opts,
@@ -233,29 +244,27 @@
       updateSummaryText();
     }
 
-    // ---------------------------------------------------------
-    // CSV EXPORT ENGINE
-    // ---------------------------------------------------------
     function exportBankToCSV() {
       if (!extractedBank || extractedBank.length === 0) {
         alert("Question bank is empty.");
         return;
       }
 
-      const headers = ["id", "source", "number", "text", "option1", "option2", "option3", "option4", "correct", "rationale"];
+      const headers = ["id", "source", "area", "number", "text", "option1", "option2", "option3", "option4", "correct", "rationale"];
       const rows = [headers];
 
       extractedBank.forEach(q => {
         const row = [
           q.id || "",
           q.source || "",
+          q.area || "area1",
           q.number || "",
           escapeCsvCell(q.text),
           escapeCsvCell(q.options[0] || ""),
           escapeCsvCell(q.options[1] || ""),
           escapeCsvCell(q.options[2] || ""),
           escapeCsvCell(q.options[3] || ""),
-          (q.correct !== undefined) ? (q.correct + 1) : "1", // Export 1-indexed for readability
+          (q.correct !== undefined) ? (q.correct + 1) : "1",
           escapeCsvCell(q.rationale || "")
         ];
         rows.push(row);
@@ -279,9 +288,6 @@
       return str;
     }
 
-    // ---------------------------------------------------------
-    // CSV PARSER (RFC 4180 COMPLIANT)
-    // ---------------------------------------------------------
     function parseCSV(text) {
       const lines = [];
       let row = [""];
@@ -328,7 +334,6 @@
             return;
           }
 
-          // Header map
           const header = parsed[0].map(h => h.trim().toLowerCase());
           const textIdx = header.findIndex(h => h.includes("text") || h.includes("question") || h.includes("prompt"));
           const opt1Idx = header.findIndex(h => h.includes("option1") || h.includes("choice1") || h.includes("opt1"));
@@ -338,6 +343,7 @@
           const correctIdx = header.findIndex(h => h.includes("correct") || h.includes("answer"));
           const rationaleIdx = header.findIndex(h => h.includes("rationale") || h.includes("explanation") || h.includes("citation"));
           const sourceIdx = header.findIndex(h => h.includes("source"));
+          const areaIdx = header.findIndex(h => h.includes("area"));
           const numIdx = header.findIndex(h => h.includes("num"));
 
           if (textIdx === -1 || opt1Idx === -1 || opt2Idx === -1) {
@@ -361,17 +367,18 @@
             let corr = 0;
             if (correctIdx > -1 && r[correctIdx]) {
               const parsedVal = parseInt(r[correctIdx].trim(), 10);
-              // Handle 1-indexed (1-4) or 0-indexed (0-3)
               corr = (!isNaN(parsedVal) && parsedVal >= 1 && parsedVal <= 4) ? (parsedVal - 1) : 0;
             }
 
             const src = (sourceIdx > -1 && r[sourceIdx]) ? r[sourceIdx].trim() : "csv_import";
+            const area = (areaIdx > -1 && r[areaIdx]) ? r[areaIdx].trim() : "area1";
             const num = (numIdx > -1 && r[numIdx]) ? parseInt(r[numIdx].trim(), 10) : i;
             const rat = (rationaleIdx > -1 && r[rationaleIdx]) ? r[rationaleIdx].trim() : "";
 
             incoming.push({
               id: `${src}-q${Date.now().toString().slice(-4)}${i}`,
               source: src,
+              area: area,
               number: isNaN(num) ? i : num,
               text: qText,
               options: optList,
@@ -380,7 +387,6 @@
             });
           }
 
-          // Duplicate detection check
           pendingCsvQuestions = incoming;
           pendingDuplicates = [];
 
