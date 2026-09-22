@@ -123,7 +123,7 @@
     <div id="export-section" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>
         <h2 class="text-sm sm:text-base font-bold text-slate-800">Step 4: Save & Download Updated HTML</h2>
-        <p class="text-xs text-slate-500">Generates a fresh <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> ready to open in any browser.</p>
+        <p class="text-xs text-slate-500">Generates a clean <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> free of character escaping bugs.</p>
       </div>
       <button onclick="exportUpdatedHtml()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-lg shadow-sm transition flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
@@ -171,27 +171,63 @@
       reader.onload = function(e) {
         rawHtml = e.target.result;
 
-        const match = rawHtml.match(/const QUESTION_BANK = (\[[\s\S]*?\]);\s*<\/script>/);
+        // Locates the script block precisely
+        const scriptStartTag = '<script id="cse-data-script">';
+        const scriptEndTag = '<\/script>';
+        
+        let startIdx = rawHtml.indexOf(scriptStartTag);
+        let endIdx = -1;
+
+        if (startIdx !== -1) {
+          startIdx += scriptStartTag.length;
+          endIdx = rawHtml.indexOf(scriptEndTag, startIdx);
+        } else {
+          // Fallback pattern if ID tag wasn't preserved
+          const fallbackMatch = rawHtml.match(/const QUESTION_BANK\s*=\s*(\[[\s\S]*?\]);\s*<\/script>/);
+          if (fallbackMatch) {
+            try {
+              extractedBank = eval(fallbackMatch[1]);
+              setupSuccessfulLoad(file.name);
+              return;
+            } catch (err) {
+              alert("Error parsing fallback QUESTION_BANK: " + err.message);
+              return;
+            }
+          }
+        }
+
+        if (startIdx === -1 || endIdx === -1) {
+          alert("Could not locate the question bank script in this file. Please ensure you uploaded a valid cse_quiz_bank.html file.");
+          return;
+        }
+
+        const scriptContent = rawHtml.substring(startIdx, endIdx);
+        const match = scriptContent.match(/const QUESTION_BANK\s*=\s*(\[[\s\S]*?\]);/);
+
         if (!match) {
-          alert("Could not locate the 'const QUESTION_BANK' array in this file. Please ensure you uploaded a valid cse_quiz_bank.html file.");
+          alert("Could not extract QUESTION_BANK array from script block.");
           return;
         }
 
         try {
           extractedBank = eval(match[1]);
-          document.getElementById('load-status').innerText = "Loaded Successfully";
-          document.getElementById('load-status').className = "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-semibold";
-
-          updateSummaryText(file.name);
-
-          document.getElementById('csv-section').classList.remove('hidden');
-          document.getElementById('editor-section').classList.remove('hidden');
-          document.getElementById('export-section').classList.remove('hidden');
+          setupSuccessfulLoad(file.name);
         } catch (err) {
           alert("Error parsing the question bank array: " + err.message);
         }
       };
       reader.readAsText(file);
+    }
+
+    function setupSuccessfulLoad(filename) {
+      document.getElementById('load-status').innerText = "Loaded Successfully";
+      document.getElementById('load-status').className = "text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-semibold";
+
+      updateSummaryText(filename);
+
+      document.getElementById('csv-section').classList.remove('hidden');
+      document.getElementById('editor-section').classList.remove('hidden');
+      document.getElementById('export-section').classList.remove('hidden');
     }
 
     function normalizeText(txt) {
@@ -452,15 +488,42 @@
       summary.innerHTML = `Question bank currently holds <strong>${extractedBank.length}</strong> questions.`;
     }
 
+    // SAFE EXPORT: Prevents JavaScript String.replace() regex $ pattern corruption
     function exportUpdatedHtml() {
       if (!rawHtml || extractedBank.length === 0) {
         alert("No active bank loaded.");
         return;
       }
 
+      const scriptStartTag = '<script id="cse-data-script">';
+      const scriptEndTag = '<\/script>';
+
+      const startIdx = rawHtml.indexOf(scriptStartTag);
+      let endIdx = -1;
+      if (startIdx !== -1) {
+        endIdx = rawHtml.indexOf(scriptEndTag, startIdx);
+      }
+
+      let newHtml = "";
       const jsonString = JSON.stringify(extractedBank, null, 2);
-      const replacement = `const QUESTION_BANK = ${jsonString};\n  <\/script>`;
-      const newHtml = rawHtml.replace(/const QUESTION_BANK = (\[[\s\S]*?\]);\s*<\/script>/, replacement);
+      const newBlockContent = `\n    const QUESTION_BANK = ${jsonString};\n  `;
+
+      if (startIdx !== -1 && endIdx !== -1) {
+        // Safe string slice replacement: No regex parsing involved
+        newHtml = rawHtml.substring(0, startIdx + scriptStartTag.length) + 
+                  newBlockContent + 
+                  rawHtml.substring(endIdx);
+      } else {
+        // Safe fallback using replacement function
+        const pattern = /(<script id="cse-data-script">)[\s\S]*?(<\/script>)/;
+        if (pattern.test(rawHtml)) {
+          newHtml = rawHtml.replace(pattern, (match, p1, p2) => `${p1}${newBlockContent}${p2}`);
+        } else {
+          // Broad fallback
+          const broadPattern = /(const QUESTION_BANK\s*=\s*)\[[\s\S]*?\];(\s*<\/script>)/;
+          newHtml = rawHtml.replace(broadPattern, (match, p1, p2) => `${p1}${jsonString};${p2}`);
+        }
+      }
 
       const blob = new Blob([newHtml], { type: "text/html;charset=utf-8" });
       const downloadAnchor = document.createElement('a');
