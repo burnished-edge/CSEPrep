@@ -14,17 +14,33 @@
       <p class="text-xs sm:text-sm text-slate-500 mt-1">Load your <code class="bg-slate-100 px-1 py-0.5 rounded text-sky-700">cse_quiz_bank.html</code> file, map questions across the 5 CAB Content Areas, import/export CSVs, resolve duplicates, and download an updated HTML application.</p>
     </div>
 
-    <!-- Step 1: Load HTML File -->
+    <!-- Step 1: Load HTML File with Drag and Drop -->
     <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-sm sm:text-base font-bold text-slate-800">Step 1: Load Existing Quiz Bank HTML</h2>
         <span id="load-status" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">No file loaded</span>
       </div>
-      <input type="file" id="htmlFileInput" accept=".html,.htm" class="block w-full text-xs sm:text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer" onchange="loadHtmlFile(event)">
-      <div id="bank-summary" class="hidden text-xs sm:text-sm bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-lg"></div>
+
+      <div id="html-dropzone" 
+           class="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-50 hover:bg-sky-50/50"
+           onclick="document.getElementById('htmlFileInput').click()">
+        <svg class="mx-auto h-8 w-8 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+        <p class="text-xs sm:text-sm font-semibold text-slate-700">Drag & drop your <code class="text-sky-700">cse_quiz_bank.html</code> file here</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">or click anywhere in this box to browse</p>
+        <input type="file" id="htmlFileInput" accept=".html,.htm" class="hidden" onchange="loadHtmlFile(event.target.files[0])">
+      </div>
+
+      <div id="bank-summary" class="hidden text-xs sm:text-sm bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-lg flex items-center justify-between flex-wrap gap-2">
+        <span id="bank-summary-text"></span>
+        <button onclick="confirmClearAllQuestions()" class="text-xs font-semibold px-2.5 py-1 bg-rose-600 text-white rounded hover:bg-rose-700 transition">
+          Clear / Delete All Questions
+        </button>
+      </div>
     </div>
 
-    <!-- Step 2: CSV Operations & Deduplication -->
+    <!-- Step 2: CSV Operations & Deduplication with Drag and Drop -->
     <div id="csv-section" class="hidden bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
         <div>
@@ -38,9 +54,28 @@
       </div>
 
       <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
-        <label class="block text-xs font-semibold text-slate-700">Import Questions from CSV File:</label>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <label class="block text-xs font-semibold text-slate-700">Import Questions from CSV File:</label>
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-medium text-slate-600">Import Mode:</label>
+            <select id="csv-import-mode" class="text-xs p-1.5 border border-slate-300 rounded bg-white font-medium outline-none focus:ring-1 focus:ring-sky-500">
+              <option value="append">Append / Merge (with Duplicate Check)</option>
+              <option value="replace">Replace All Existing Questions</option>
+            </select>
+          </div>
+        </div>
         <p class="text-[11px] text-slate-500">Header columns: <code class="bg-white px-1 py-0.5 rounded border">source, area, number, text, option1, option2, option3, option4, correct, rationale</code></p>
-        <input type="file" id="csvFileInput" accept=".csv" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer" onchange="handleCSVUpload(event)">
+        
+        <div id="csv-dropzone" 
+             class="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-xl p-5 text-center cursor-pointer transition bg-white hover:bg-sky-50/40"
+             onclick="document.getElementById('csvFileInput').click()">
+          <svg class="mx-auto h-7 w-7 text-slate-400 mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <p class="text-xs sm:text-sm font-semibold text-slate-700">Drag & drop your <code class="text-sky-700">.csv</code> question file here</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">or click to browse</p>
+          <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleCSVUpload(event.target.files[0])">
+        </div>
       </div>
     </div>
 
@@ -163,15 +198,42 @@
     let pendingCsvQuestions = [];
     let pendingDuplicates = [];
 
-    function loadHtmlFile(event) {
-      const file = event.target.files[0];
+    // Helper to register standard Drag & Drop behaviors
+    function setupDropzone(zoneId, onFileDrop) {
+      const dropzone = document.getElementById(zoneId);
+      if (!dropzone) return;
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('border-sky-500', 'bg-sky-50/80');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('border-sky-500', 'bg-sky-50/80');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          onFileDrop(files[0]);
+        }
+      }, false);
+    }
+
+    function loadHtmlFile(file) {
       if (!file) return;
 
       const reader = new FileReader();
       reader.onload = function(e) {
         rawHtml = e.target.result;
 
-        // Locates the script block precisely
         const scriptStartTag = '<script id="cse-data-script">';
         const scriptEndTag = '<\/script>';
         
@@ -182,7 +244,6 @@
           startIdx += scriptStartTag.length;
           endIdx = rawHtml.indexOf(scriptEndTag, startIdx);
         } else {
-          // Fallback pattern if ID tag wasn't preserved
           const fallbackMatch = rawHtml.match(/const QUESTION_BANK\s*=\s*(\[[\s\S]*?\]);\s*<\/script>/);
           if (fallbackMatch) {
             try {
@@ -228,6 +289,20 @@
       document.getElementById('csv-section').classList.remove('hidden');
       document.getElementById('editor-section').classList.remove('hidden');
       document.getElementById('export-section').classList.remove('hidden');
+    }
+
+    function confirmClearAllQuestions() {
+      if (extractedBank.length === 0) {
+        alert("The bank is already empty.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete ALL ${extractedBank.length} questions from the current bank?`)) {
+        if (confirm("Please confirm a second time: This will permanently wipe all questions until you import a new CSV or download the file.")) {
+          extractedBank = [];
+          updateSummaryText();
+          alert("All questions have been cleared from the bank.");
+        }
+      }
     }
 
     function normalizeText(txt) {
@@ -356,9 +431,10 @@
       return lines;
     }
 
-    function handleCSVUpload(event) {
-      const file = event.target.files[0];
+    function handleCSVUpload(file) {
       if (!file) return;
+
+      const importMode = document.getElementById('csv-import-mode').value;
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -423,6 +499,15 @@
             });
           }
 
+          if (importMode === 'replace') {
+            if (confirm(`You selected "Replace All Questions". This will replace all ${extractedBank.length} existing items with ${incoming.length} items from the CSV. Proceed?`)) {
+              extractedBank = incoming;
+              alert(`Successfully replaced bank with ${incoming.length} questions from CSV!`);
+              updateSummaryText();
+            }
+            return;
+          }
+
           pendingCsvQuestions = incoming;
           pendingDuplicates = [];
 
@@ -450,7 +535,7 @@
         }
       };
       reader.readAsText(file);
-      event.target.value = "";
+      document.getElementById('csvFileInput').value = "";
     }
 
     function resolveDuplicates(strategy) {
@@ -484,13 +569,13 @@
 
     function updateSummaryText(filename) {
       const summary = document.getElementById('bank-summary');
+      const textEl = document.getElementById('bank-summary-text');
       summary.classList.remove('hidden');
-      summary.innerHTML = `Question bank currently holds <strong>${extractedBank.length}</strong> questions.`;
+      textEl.innerHTML = `Question bank currently holds <strong>${extractedBank.length}</strong> questions.`;
     }
 
-    // SAFE EXPORT: Prevents JavaScript String.replace() regex $ pattern corruption
     function exportUpdatedHtml() {
-      if (!rawHtml || extractedBank.length === 0) {
+      if (!rawHtml) {
         alert("No active bank loaded.");
         return;
       }
@@ -509,17 +594,14 @@
       const newBlockContent = `\n    const QUESTION_BANK = ${jsonString};\n  `;
 
       if (startIdx !== -1 && endIdx !== -1) {
-        // Safe string slice replacement: No regex parsing involved
         newHtml = rawHtml.substring(0, startIdx + scriptStartTag.length) + 
                   newBlockContent + 
                   rawHtml.substring(endIdx);
       } else {
-        // Safe fallback using replacement function
         const pattern = /(<script id="cse-data-script">)[\s\S]*?(<\/script>)/;
         if (pattern.test(rawHtml)) {
           newHtml = rawHtml.replace(pattern, (match, p1, p2) => `${p1}${newBlockContent}${p2}`);
         } else {
-          // Broad fallback
           const broadPattern = /(const QUESTION_BANK\s*=\s*)\[[\s\S]*?\];(\s*<\/script>)/;
           newHtml = rawHtml.replace(broadPattern, (match, p1, p2) => `${p1}${jsonString};${p2}`);
         }
@@ -533,6 +615,12 @@
       downloadAnchor.click();
       downloadAnchor.remove();
     }
+
+    // Attach listeners on load
+    window.addEventListener('DOMContentLoaded', () => {
+      setupDropzone('html-dropzone', loadHtmlFile);
+      setupDropzone('csv-dropzone', handleCSVUpload);
+    });
   </script>
 </body>
 </html>
